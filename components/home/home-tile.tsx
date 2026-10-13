@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { LucideIcon } from "lucide-react";
+import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
 
 import { cn } from "@/lib/utils";
 
@@ -11,7 +11,7 @@ export function HomeTile({
   href,
   title,
   subtitle,
-  icon: Icon,
+  icon,
   tone,
   className,
   children,
@@ -19,7 +19,7 @@ export function HomeTile({
   href: string;
   title: string;
   subtitle?: string;
-  icon: LucideIcon;
+  icon: IconSvgElement;
   /** Tailwind classes for the icon bubble, e.g. "bg-chart-1/15 text-chart-1". */
   tone: string;
   className?: string;
@@ -36,7 +36,7 @@ export function HomeTile({
       )}
     >
       <span className={cn("flex size-16 shrink-0 items-center justify-center rounded-2xl", tone)}>
-        <Icon className="size-9" aria-hidden />
+        <HugeiconsIcon icon={icon} className="size-9" strokeWidth={2} aria-hidden />
       </span>
       <span className="flex min-w-0 flex-col gap-1">
         <span className="font-heading text-3xl font-bold tracking-tight">{title}</span>

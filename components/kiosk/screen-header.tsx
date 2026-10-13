@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { House } from "lucide-react";
+import { Home01Icon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 
 import { Button } from "@/components/ui/button";
 
@@ -12,7 +13,7 @@ export function ScreenHeader({ title, children }: { title: string; children?: Re
     <header className="flex shrink-0 items-center gap-6 px-8 pt-6 pb-4">
       <Button asChild variant="secondary" size="lg" className="rounded-2xl">
         <Link href="/" replace>
-          <House className="size-8" aria-hidden />
+          <HugeiconsIcon icon={Home01Icon} className="size-8" strokeWidth={2} aria-hidden />
           Home
         </Link>
       </Button>

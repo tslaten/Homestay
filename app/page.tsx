@@ -1,14 +1,14 @@
 import { Suspense } from "react";
 import { io } from "next/cache";
 import {
-  BookOpen,
-  CalendarCheck,
-  KeyRound,
-  MapPin,
-  PawPrint,
-  Phone,
-  Wifi,
-} from "lucide-react";
+  BookOpen01Icon,
+  Call02Icon,
+  Key01Icon,
+  MapsLocation01Icon,
+  PawPrintIcon,
+  TaskDone01Icon,
+  Wifi01Icon,
+} from "@hugeicons/core-free-icons";
 
 import { HomeTile } from "@/components/home/home-tile";
 import { LiveClock } from "@/components/kiosk/live-clock";
@@ -91,7 +91,7 @@ async function Home() {
         <HomeTile
           href="/today"
           title="Today"
-          icon={CalendarCheck}
+          icon={TaskDone01Icon}
           tone="bg-primary text-primary-foreground"
           className="col-span-2 md:col-span-1 md:row-span-2"
           subtitle={
@@ -110,35 +110,35 @@ async function Home() {
         <HomeTile
           href="/pets"
           title="Pets"
-          icon={PawPrint}
+          icon={PawPrintIcon}
           tone="bg-chart-1/15 text-chart-1"
           subtitle={listNames(petList.map((p) => p.name)) || "Meet the pets"}
         />
         <HomeTile
           href="/guide"
           title="Home Guide"
-          icon={BookOpen}
+          icon={BookOpen01Icon}
           tone="bg-chart-2/15 text-chart-2"
           subtitle={countLabel(guideList.length, "guide")}
         />
         <HomeTile
           href="/orlando"
           title="Orlando"
-          icon={MapPin}
+          icon={MapsLocation01Icon}
           tone="bg-chart-3/15 text-chart-3"
           subtitle={countLabel(placeList.length, "place") + " nearby"}
         />
         <HomeTile
           href="/wifi"
           title="Wi-Fi"
-          icon={Wifi}
+          icon={Wifi01Icon}
           tone="bg-chart-4/15 text-chart-4"
           subtitle={settings.wifi.ssid}
         />
         <HomeTile
           href="/contacts"
           title="Contacts"
-          icon={Phone}
+          icon={Call02Icon}
           tone="bg-chart-5/15 text-chart-5"
           subtitle={
             contactList.some((c) => c.emergency) ? "Host & emergency" : countLabel(contactList.length, "contact")
@@ -148,7 +148,7 @@ async function Home() {
         <HomeTile
           href="/codes"
           title="Codes"
-          icon={KeyRound}
+          icon={Key01Icon}
           tone="bg-muted text-foreground"
           subtitle={listNames(codeList.map((c) => c.label)) || "Door codes"}
         />
