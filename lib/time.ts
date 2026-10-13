@@ -110,6 +110,11 @@ export function formatClock(now: Date = new Date()): string {
   return clockFormatter.format(now);
 }
 
+/** "7:42 PM" — wall-clock time in New York of a stored instant. */
+export function formatTimestampTime(ts: Timestamp): string {
+  return clockFormatter.format(new Date(ts));
+}
+
 /** "Tuesday, October 13" — current date in New York. */
 export function formatLongDate(now: Date = new Date()): string {
   return longDateFormatter.format(now);
