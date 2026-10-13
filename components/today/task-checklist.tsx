@@ -4,7 +4,7 @@ import { Fragment, startTransition, useEffect, useOptimistic, useRef, useState }
 import { Moon02Icon, Sun03Icon, SunriseIcon, Tick02Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
 
-import { setTaskDone } from "@/app/today/actions";
+import { setTaskDone } from "@/app/(kiosk)/today/actions";
 import { cn } from "@/lib/utils";
 
 /** One task occurrence, pre-formatted on the server (New York time). */

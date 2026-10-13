@@ -157,6 +157,8 @@ export function buildSeed(now: Date = new Date()): { settings: Settings; docs: S
     ],
 
     completions: [],
+    devices: [],
+    pairings: [],
 
     howtos: [
       {

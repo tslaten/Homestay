@@ -246,15 +246,25 @@
 
 @layer base {
   html {
-    /* Read from 1–2 m away: larger root size scales every rem-based utility. */
+    /* Read from 1–2 m away: larger root size scales every rem-based utility.
+       This is the default (rather than opting in) so the Echo Show gets it
+       even if its browser lacks :has(); admin pages opt out below. */
     font-size: 20px;
     -webkit-text-size-adjust: 100%;
   }
 
-  body {
-    /* Kiosk behaviour: no rubber-band scroll, no long-press callouts,
-       no grey tap flash, no accidental text selection. */
+  /* Admin is used on a phone or laptop: normal type and scrolling. */
+  html:has([data-admin]) {
+    font-size: 16px;
+  }
+
+  html:has([data-kiosk]) body {
     overscroll-behavior: none;
+  }
+
+  /* Kiosk behaviour: no long-press callouts, no grey tap flash, no
+     accidental text selection. */
+  [data-kiosk] {
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
     user-select: none;

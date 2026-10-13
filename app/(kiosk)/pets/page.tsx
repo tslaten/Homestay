@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { requireGuest } from "@/lib/auth/device";
 import { io } from "next/cache";
 
 import { ScreenHeader } from "@/components/kiosk/screen-header";
@@ -22,6 +23,7 @@ export default function PetsPage() {
 
 async function PetsContent() {
   await io();
+  await requireGuest();
   const today = todayISO();
 
   const [petList, taskList, contactList, done] = await Promise.all([
