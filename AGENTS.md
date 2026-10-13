@@ -7,3 +7,11 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## Workflow
+
+- `main` is the production branch: every push to it deploys to Vercel production.
+- Never push directly to `main`. Put new work on a branch and open a pull request,
+  so the Vercel preview deployment can be checked before merging.
+- Before pushing, run `npm run lint`, `npm run typecheck` and `npm run build`.
+- All date/time logic goes through `lib/time.ts` (America/New_York).
