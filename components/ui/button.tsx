@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 // - every size is at least 56px (min-h-touch) tall
 // - press feedback uses `active:` instead of `hover:`
 const buttonVariants = cva(
-  "inline-flex shrink-0 items-center justify-center gap-3 whitespace-nowrap rounded-xl font-semibold transition-[color,background-color,transform] outline-none select-none touch-manipulation active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-6 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
+  "inline-flex shrink-0 items-center justify-center gap-3 whitespace-nowrap rounded-xl font-heading font-bold transition-[color,background-color,transform] outline-none select-none touch-manipulation active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-6 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
   {
     variants: {
       variant: {

@@ -16,7 +16,7 @@ export function ScreenHeader({ title, children }: { title: string; children?: Re
           Home
         </Link>
       </Button>
-      <h1 className="flex-1 truncate text-4xl font-semibold tracking-tight">{title}</h1>
+      <h1 className="flex-1 truncate text-4xl tracking-tight">{title}</h1>
       {children}
     </header>
   );

@@ -39,7 +39,7 @@ export function HomeTile({
         <Icon className="size-9" aria-hidden />
       </span>
       <span className="flex min-w-0 flex-col gap-1">
-        <span className="text-3xl font-semibold tracking-tight">{title}</span>
+        <span className="font-heading text-3xl font-bold tracking-tight">{title}</span>
         {subtitle && <span className="line-clamp-2 text-xl text-muted-foreground">{subtitle}</span>}
       </span>
       {children}

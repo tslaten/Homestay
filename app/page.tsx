@@ -71,7 +71,7 @@ async function Home() {
     <div className="flex h-full flex-col gap-6 p-8">
       <header className="flex shrink-0 items-start justify-between gap-8">
         <div className="min-w-0">
-          <h1 className="truncate text-5xl font-semibold tracking-tight">
+          <h1 className="truncate text-5xl tracking-tight">
             {greeting(now)}
             {stay ? `, ${stay.guestName}` : ""}
           </h1>
@@ -167,7 +167,7 @@ function TodaySummary({
   overdue: number;
 }) {
   if (allDone) {
-    return <p className="mt-auto text-2xl font-medium">All done for today. Thank you!</p>;
+    return <p className="mt-auto font-heading text-2xl font-bold">All done for today. Thank you!</p>;
   }
   if (!next) return null;
   return (
@@ -180,7 +180,7 @@ function TodaySummary({
       <div className="rounded-2xl bg-muted p-4">
         <p className="text-lg text-muted-foreground">Up next</p>
         <p className="text-xl font-medium tabular-nums">{next.time}</p>
-        <p className="text-2xl font-semibold">{next.title}</p>
+        <p className="font-heading text-2xl font-bold">{next.title}</p>
       </div>
     </div>
   );
