@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { requireGuest } from "@/lib/auth/device";
 import { io } from "next/cache";
 
 import { CodeCard } from "@/components/codes/code-card";
@@ -20,6 +21,7 @@ export default function CodesPage() {
 
 async function CodesContent() {
   await io();
+  await requireGuest();
   const list = await codes.list();
 
   if (list.length === 0) {

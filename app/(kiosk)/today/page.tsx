@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { requireGuest } from "@/lib/auth/device";
 import { io } from "next/cache";
 import { Logout03Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -37,6 +38,7 @@ async function HeaderDate() {
 
 async function TodayContent() {
   await io();
+  await requireGuest();
   const now = new Date();
   const today = todayISO(now);
 

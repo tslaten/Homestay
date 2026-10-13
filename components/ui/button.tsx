@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 // shadcn/ui Button (new-york), adapted for a touch-only kiosk:
-// - every size is at least 56px (min-h-touch) tall
+// - every kiosk size is at least 56px (min-h-touch) tall; `compact` is for admin
 // - press feedback uses `active:` instead of `hover:`
 const buttonVariants = cva(
   "inline-flex shrink-0 items-center justify-center gap-3 whitespace-nowrap rounded-xl font-heading font-bold transition-[color,background-color,transform] outline-none select-none touch-manipulation active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-6 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
@@ -26,6 +26,8 @@ const buttonVariants = cva(
         sm: "min-h-touch px-4 text-base",
         lg: "min-h-18 px-8 text-xl",
         icon: "size-touch",
+        /** Admin pages (phone/laptop, not the kiosk): standard 44px controls. */
+        compact: "h-11 px-4 text-base [&_svg:not([class*='size-'])]:size-5",
       },
     },
     defaultVariants: {

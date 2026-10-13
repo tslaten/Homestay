@@ -47,6 +47,9 @@ interface Store {
   delete(c: CollectionName, id: string): Promise<boolean>;
   isSeeded(): Promise<boolean>;
   markSeeded(): Promise<void>;
+  /** Increment a counter that expires `ttlSeconds` after its first increment. */
+  incr(key: string, ttlSeconds: number): Promise<number>;
+  resetCounter(key: string): Promise<void>;
 }
 
 function redisStore(redis: Redis): Store {
@@ -77,12 +80,21 @@ function redisStore(redis: Redis): Store {
     async markSeeded() {
       await redis.set(SEEDED_KEY, "1");
     },
+    async incr(key, ttlSeconds) {
+      const n = await redis.incr(`${PREFIX}:${key}`);
+      if (n === 1) await redis.expire(`${PREFIX}:${key}`, ttlSeconds);
+      return n;
+    },
+    async resetCounter(key) {
+      await redis.del(`${PREFIX}:${key}`);
+    },
   };
 }
 
 function memoryStore(): Store {
   let settings: Settings | null = null;
   let seeded = false;
+  const counters = new Map<string, { n: number; expires: number }>();
   const data = new Map<CollectionName, Map<string, BaseDoc>>();
   const coll = (c: CollectionName) => {
     if (!data.has(c)) data.set(c, new Map());
@@ -114,6 +126,16 @@ function memoryStore(): Store {
     },
     async markSeeded() {
       seeded = true;
+    },
+    async incr(key, ttlSeconds) {
+      const now = Date.now();
+      const cur = counters.get(key);
+      const next = cur && cur.expires > now ? { ...cur, n: cur.n + 1 } : { n: 1, expires: now + ttlSeconds * 1000 };
+      counters.set(key, next);
+      return next.n;
+    },
+    async resetCounter(key) {
+      counters.delete(key);
     },
   };
 }
@@ -228,9 +250,20 @@ export const howtos = repo("howtos", byOrder);
 export const places = repo("places", byOrder);
 export const contacts = repo("contacts", byOrder);
 export const codes = repo("codes", byOrder);
+export const devices = repo("devices", (a, b) => a.createdAt.localeCompare(b.createdAt));
+export const pairings = repo("pairings", (a, b) => b.createdAt.localeCompare(a.createdAt));
 
 /** Everything in one object, e.g. `db.pets.list()`. */
-export const db = { stays, pets, tasks, completions, howtos, places, contacts, codes };
+export const db = { stays, pets, tasks, completions, howtos, places, contacts, codes, devices, pairings };
+
+/** Fixed-window counter in the store (used for login rate limiting). */
+export async function incrementCounter(key: string, ttlSeconds: number): Promise<number> {
+  return (await ready()).incr(key, ttlSeconds);
+}
+
+export async function resetCounter(key: string): Promise<void> {
+  return (await ready()).resetCounter(key);
+}
 
 // ---------------------------------------------------------------------------
 // Domain helpers

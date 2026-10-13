@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { requireGuest } from "@/lib/auth/device";
 import { io } from "next/cache";
 
 import { GuideBrowser } from "@/components/guide/guide-browser";
@@ -20,6 +21,7 @@ export default function GuidePage() {
 
 async function GuideContent() {
   await io();
+  await requireGuest();
   const list = await howtos.list();
 
   if (list.length === 0) {

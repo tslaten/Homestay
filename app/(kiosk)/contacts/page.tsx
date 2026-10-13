@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { requireGuest } from "@/lib/auth/device";
 import { io } from "next/cache";
 import { Call02Icon, Location01Icon, Mail01Icon, SirenIcon, UserIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -23,6 +24,7 @@ export default function ContactsPage() {
 
 async function ContactsContent() {
   await io();
+  await requireGuest();
   const [settings, list] = await Promise.all([getSettings(), contacts.list()]);
   const emergency = list.filter((c) => c.emergency);
   const others = list.filter((c) => !c.emergency);

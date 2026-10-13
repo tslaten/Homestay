@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { requireGuest } from "@/lib/auth/device";
 import { io } from "next/cache";
 import QRCode from "qrcode";
 
@@ -22,6 +23,7 @@ export default function OrlandoPage() {
 
 async function OrlandoContent() {
   await io();
+  await requireGuest();
   const list = await places.list();
 
   if (list.length === 0) {

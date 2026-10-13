@@ -20,6 +20,15 @@ settings and sample docs later:
 npm run db:seed -- --force
 ```
 
+## Admin and the screen lock
+
+- `/admin` is the host's editor. Set `ADMIN_PASSWORD` (a long passphrase) in Vercel →
+  Settings → Environment Variables. Optionally set `SESSION_SECRET` too, so you can change
+  the password later without re-approving screens.
+- Guest screens only open on approved devices. Open the site on the Echo Show: it shows a
+  6-digit code. On your phone, sign in to `/admin/devices` and approve that code.
+- A signed-in host can also view the guest screens.
+
 ## Deploy
 
 Vercel builds `main`. Production needs the Upstash for Redis integration connected

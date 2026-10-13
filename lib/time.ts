@@ -115,6 +115,19 @@ export function formatTimestampTime(ts: Timestamp): string {
   return clockFormatter.format(new Date(ts));
 }
 
+const timestampFormatter = new Intl.DateTimeFormat("en-US", {
+  timeZone: TIME_ZONE,
+  month: "short",
+  day: "numeric",
+  hour: "numeric",
+  minute: "2-digit",
+});
+
+/** "Oct 13, 4:05 PM" — a stored instant shown in New York time. */
+export function formatTimestamp(ts: Timestamp): string {
+  return timestampFormatter.format(new Date(ts));
+}
+
 /** "Tuesday, October 13" — current date in New York. */
 export function formatLongDate(now: Date = new Date()): string {
   return longDateFormatter.format(now);

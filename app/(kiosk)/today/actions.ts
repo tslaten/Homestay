@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
+import { requireGuest } from "@/lib/auth/device";
 import { completeTask, tasks, uncompleteTask } from "@/lib/db";
 import { slotsOn } from "@/lib/schedule";
 import { addDays, todayISO } from "@/lib/time";
@@ -14,6 +15,7 @@ const TIME_RE = /^\d{2}:\d{2}$/;
  * so check the occurrence really exists before writing anything.
  */
 export async function setTaskDone(taskId: string, date: string, time: string, done: boolean) {
+  await requireGuest();
   if (typeof taskId !== "string" || !DATE_RE.test(date) || !TIME_RE.test(time)) {
     throw new Error("Invalid task occurrence");
   }

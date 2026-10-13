@@ -12,6 +12,7 @@ import {
 
 import { HomeTile } from "@/components/home/home-tile";
 import { LiveClock } from "@/components/kiosk/live-clock";
+import { requireGuest } from "@/lib/auth/device";
 import {
   codes,
   contacts,
@@ -44,6 +45,7 @@ export default function HomePage() {
 async function Home() {
   // "Now" and the stored data are per-request; keep them out of the static shell.
   await io();
+  await requireGuest();
   const now = new Date();
   const today = todayISO(now);
   const currentTime = nowLocalTime(now);
