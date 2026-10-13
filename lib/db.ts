@@ -22,7 +22,8 @@ export type * from "./types";
  * Storage layout (Upstash Redis):
  *   homestay:settings          JSON value  — Settings singleton
  *   homestay:<collection>      HASH        — field = doc id, value = JSON doc
- *   homestay:seeded            "1"         — set once seed data is written
+ *   homestay:seeded            "1"         — set once seed data is written; never
+ *                                           re-seeded automatically after that
  *
  * If no Upstash credentials are configured, an in-memory store pre-loaded
  * with seed data is used instead (handy for `next dev`; resets on restart).
@@ -152,9 +153,17 @@ export async function seed({ force = false }: { force?: boolean } = {}): Promise
   return true;
 }
 
-/** Lazily seed the in-memory store on first access. Redis is seeded via `npm run db:seed`. */
+/**
+ * Seed on first access if the store is empty: always for the in-memory store,
+ * and once for a fresh Redis database so a new deploy shows sample content
+ * instead of blank screens. Once `homestay:seeded` exists this is one EXISTS
+ * call per server instance. A failed attempt is retried on the next request.
+ */
 async function ready(): Promise<Store> {
-  if (!usingRedis) await (globalForDb.__homestaySeeding ??= seed());
+  await (globalForDb.__homestaySeeding ??= seed().catch((err) => {
+    globalForDb.__homestaySeeding = undefined;
+    throw err;
+  }));
   return store;
 }
 

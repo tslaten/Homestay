@@ -1,5 +1,6 @@
 /**
- * Seed Upstash Redis with sample data.
+ * Seed Upstash Redis with sample data. The app also does this by itself the
+ * first time it sees an empty database, so this is mainly for --force.
  *   npm run db:seed            # only if not seeded yet
  *   npm run db:seed -- --force # overwrite settings + seed docs (other docs are kept)
  * Reads credentials from .env.local (see .env.example).

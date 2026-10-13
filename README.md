@@ -11,12 +11,19 @@ npm install
 npm run dev          # uses an in-memory store with sample data if no Redis env vars are set
 ```
 
-To use Upstash, copy `.env.example` to `.env.local`, fill in the credentials, then:
+To use Upstash locally, run `vercel env pull .env.local` (or copy `.env.example` and fill it in).
+
+An empty database is filled with sample data automatically on first use. To reset the
+settings and sample docs later:
 
 ```bash
-npm run db:seed              # write sample data once
-npm run db:seed -- --force   # overwrite settings + sample docs
+npm run db:seed -- --force
 ```
+
+## Deploy
+
+Vercel builds `main`. Production needs the Upstash for Redis integration connected
+(`KV_REST_API_URL` / `KV_REST_API_TOKEN`); the build fails without it.
 
 ## Theme
 
