@@ -20,15 +20,11 @@ settings and sample docs later:
 npm run db:seed -- --force
 ```
 
-## Admin and the screen lock
+## Admin
 
-There is no password. Guest screens and `/admin` only open on **approved devices**.
-
-- The first browser to open a fresh deployment is approved automatically (do this on the
-  Echo Show or your phone straight after deploying).
-- Any other browser shows a 6-digit code. On an approved device, open `/admin/devices` and
-  approve it. Removing a device locks it out again.
-- If every device is removed, the next browser to open the site is approved automatically.
+`/admin` is open to anyone with the site's URL, and so are the guest screens (including
+door codes). There is no password or device approval for now. All checks go through
+`lib/auth/access.ts`, so access control can be added there later.
 
 ## Deploy
 

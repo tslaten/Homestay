@@ -12,7 +12,7 @@ import {
 
 import { HomeTile } from "@/components/home/home-tile";
 import { LiveClock } from "@/components/kiosk/live-clock";
-import { requireGuest } from "@/lib/auth/device";
+import { requireGuest } from "@/lib/auth/access";
 import {
   codes,
   contacts,

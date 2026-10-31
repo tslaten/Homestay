@@ -6,7 +6,6 @@ import {
   ArrowUpRight01Icon,
   DashboardSquare01Icon,
   Settings02Icon,
-  SmartPhone01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 
@@ -15,7 +14,6 @@ import { cn } from "@/lib/utils";
 const LINKS = [
   { href: "/admin", label: "Home", icon: DashboardSquare01Icon },
   { href: "/admin/settings", label: "Settings", icon: Settings02Icon },
-  { href: "/admin/devices", label: "Devices", icon: SmartPhone01Icon },
 ] as const;
 
 export function AdminNav() {

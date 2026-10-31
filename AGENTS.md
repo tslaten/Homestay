@@ -17,5 +17,5 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - All date/time logic goes through `lib/time.ts` (America/New_York).
 - Guest pages live in `app/(kiosk)`, admin in `app/(admin)/admin`. Every guest page's data
   component and guest Server Action calls `requireGuest()`; every admin page and admin Server
-  Action calls `requireAdmin()` (both mean "an approved device"; there is no password).
-  `proxy.ts` is only a first-pass redirect, never the sole check.
+  Action calls `requireAdmin()` (lib/auth/access.ts). Access is currently open to anyone with
+  the URL by the owner's choice; keep calling the hooks so checks can be added in one place.
