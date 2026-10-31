@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { requireAdmin } from "@/lib/auth/device";
+import { requireAdmin } from "@/lib/auth/access";
 import { updateSettings } from "@/lib/db";
 import { fieldErrors, settingsSchema } from "@/lib/schemas";
 

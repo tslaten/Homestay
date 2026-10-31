@@ -1,10 +1,10 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { ArrowRight01Icon, Settings02Icon, SmartPhone01Icon } from "@hugeicons/core-free-icons";
+import { ArrowRight01Icon, Settings02Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
 
-import { listPendingPairings, requireAdmin } from "@/lib/auth/device";
-import { devices, getSettings } from "@/lib/db";
+import { requireAdmin } from "@/lib/auth/access";
+import { getSettings } from "@/lib/db";
 
 export const metadata = { title: "Guest Guide admin" };
 
@@ -21,29 +21,15 @@ export default function AdminHome() {
 
 async function DashboardContent() {
   await requireAdmin();
-  const [settings, pending, approved] = await Promise.all([getSettings(), listPendingPairings(), devices.list()]);
+  const settings = await getSettings();
 
   return (
     <div className="flex flex-col gap-3">
-      {pending.length > 0 && (
-        <Link
-          href="/admin/devices"
-          className="rounded-2xl border-2 border-primary bg-primary/10 p-4 font-heading font-bold"
-        >
-          {pending.length === 1 ? "A screen is" : `${pending.length} screens are`} waiting for approval →
-        </Link>
-      )}
       <Tile
         href="/admin/settings"
         icon={Settings02Icon}
         title="Settings"
         detail={`${settings.propertyName} · Wi-Fi “${settings.wifi.ssid}”`}
-      />
-      <Tile
-        href="/admin/devices"
-        icon={SmartPhone01Icon}
-        title="Devices"
-        detail={approved.length === 0 ? "No screens approved yet" : `${approved.length} approved`}
       />
       <p className="mt-4 text-sm text-muted-foreground">
         Editing pets, tasks, stays, guides, places, contacts and codes is coming next.

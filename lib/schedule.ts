@@ -22,6 +22,11 @@ export function slotsOn(task: Task, date: ISODate): LocalTime[] {
   }
 }
 
+/** Occurrences that count toward progress, "overdue" and "up next" (optional ones don't). */
+export function required(occurrences: Occurrence[]): Occurrence[] {
+  return occurrences.filter((o) => !o.task.optional);
+}
+
 /** Every task occurrence on `date`, in time order, flagged done/not done. */
 export function occurrencesOn(tasks: Task[], completions: Completion[], date: ISODate): Occurrence[] {
   const done = new Set(completions.filter((c) => c.date === date).map((c) => `${c.taskId}@${c.time}`));

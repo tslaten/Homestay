@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { requireGuest } from "@/lib/auth/device";
+import { requireGuest } from "@/lib/auth/access";
 import { completeTask, tasks, uncompleteTask } from "@/lib/db";
 import { slotsOn } from "@/lib/schedule";
 import { addDays, todayISO } from "@/lib/time";

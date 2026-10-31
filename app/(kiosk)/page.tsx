@@ -12,7 +12,7 @@ import {
 
 import { HomeTile } from "@/components/home/home-tile";
 import { LiveClock } from "@/components/kiosk/live-clock";
-import { requireGuest } from "@/lib/auth/device";
+import { requireGuest } from "@/lib/auth/access";
 import {
   codes,
   contacts,
@@ -24,7 +24,7 @@ import {
   places,
   tasks,
 } from "@/lib/db";
-import { occurrencesOn } from "@/lib/schedule";
+import { occurrencesOn, required } from "@/lib/schedule";
 import {
   formatClock,
   formatLocalTime,
@@ -63,7 +63,7 @@ async function Home() {
       codes.list(),
     ]);
 
-  const todays = occurrencesOn(taskList, done, today);
+  const todays = required(occurrencesOn(taskList, done, today));
   const remaining = todays.filter((o) => !o.done);
   const next = remaining.find((o) => o.time >= currentTime) ?? remaining[0];
   const overdue = remaining.filter((o) => o.time < currentTime).length;

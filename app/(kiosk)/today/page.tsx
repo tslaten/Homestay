@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { requireGuest } from "@/lib/auth/device";
+import { requireGuest } from "@/lib/auth/access";
 import { io } from "next/cache";
 import { Logout03Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -64,6 +64,7 @@ async function TodayContent() {
       title: o.task.title,
       details: o.task.details,
       petName: o.task.petId ? petNames.get(o.task.petId) : undefined,
+      optional: o.task.optional,
       done: o.done,
       doneLabel: at ? formatTimestampTime(at) : undefined,
     };

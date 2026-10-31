@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { requireGuest } from "@/lib/auth/device";
+import { requireGuest } from "@/lib/auth/access";
 import { io } from "next/cache";
 import { Call02Icon, Location01Icon, Mail01Icon, SirenIcon, UserIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";

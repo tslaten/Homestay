@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 
-import { requireAdmin } from "@/lib/auth/device";
+import { requireAdmin } from "@/lib/auth/access";
 import { SettingsForm } from "@/components/admin/settings-form";
 import { getSettings } from "@/lib/db";
 

@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { requireGuest } from "@/lib/auth/device";
+import { requireGuest } from "@/lib/auth/access";
 import { io } from "next/cache";
 
 import { CodeCard } from "@/components/codes/code-card";
