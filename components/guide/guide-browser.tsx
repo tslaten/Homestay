@@ -4,6 +4,7 @@ import { useState } from "react";
 import {
   BookOpen01Icon,
   FirstAidKitIcon,
+  PawPrintIcon,
   ThermometerIcon,
   TreePalmIcon,
   Tv01Icon,
@@ -18,12 +19,13 @@ export type GuideView = Pick<HowTo, "id" | "title" | "category" | "summary" | "s
 
 // Display order of categories in the list (guides keep their own `order` within each).
 const CATEGORIES: { id: HowTo["category"]; label: string; icon: IconSvgElement }[] = [
+  { id: "pets", label: "Cats", icon: PawPrintIcon },
   { id: "safety", label: "Safety", icon: FirstAidKitIcon },
   { id: "climate", label: "Heating & cooling", icon: ThermometerIcon },
   { id: "appliances", label: "Appliances", icon: WashingMachineIcon },
   { id: "entertainment", label: "TV & entertainment", icon: Tv01Icon },
   { id: "outdoor", label: "Outdoors", icon: TreePalmIcon },
-  { id: "other", label: "Other", icon: BookOpen01Icon },
+  { id: "other", label: "Around the house", icon: BookOpen01Icon },
 ];
 
 const categoryOf = (id: HowTo["category"]) => CATEGORIES.find((c) => c.id === id) ?? CATEGORIES.at(-1)!;

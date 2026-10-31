@@ -107,6 +107,57 @@ const MIGRATIONS: Migration[] = [
       await putFromSeed(store, "tasks", missing);
     },
   },
+  {
+    // The real house details: Wi-Fi, vet and emergency vet, front door code,
+    // house guides, where the cats hide, and a daily "see both cats" check.
+    id: "2026-11-house-details",
+    async run(store) {
+      const seed = buildSeed();
+      const fromSeed = <C extends CollectionName>(c: C, id: string) =>
+        (seed.docs[c] as { id: string }[]).filter((d) => d.id === id);
+      const putIfMissing = async <C extends CollectionName>(c: C, id: string) => {
+        if (!(await store.get(c, id))) await putFromSeed(store, c, fromSeed(c, id));
+      };
+
+      const settings = await store.getSettings();
+      // Still the sample network (by its sample password; an earlier migration may have renamed it).
+      if (settings?.wifi.password === "change-me-please") {
+        await store.setSettings({ ...settings, wifi: seed.settings.wifi, updatedAt: new Date().toISOString() });
+      }
+
+      if ((await store.get("contacts", "contact-vet"))?.name === "Sample Animal Hospital") {
+        await putFromSeed(store, "contacts", fromSeed("contacts", "contact-vet"));
+      }
+      await putIfMissing("contacts", "contact-veg");
+
+      for (const fresh of seed.docs.pets) {
+        const pet = await store.get("pets", fresh.id);
+        if (pet?.about === "One of the two resident cats.") {
+          await store.put("pets", [
+            { ...pet, about: fresh.about, hidingSpots: fresh.hidingSpots, updatedAt: new Date().toISOString() },
+          ]);
+        }
+      }
+
+      await putIfMissing("tasks", "task-see-cats");
+
+      await Promise.all(
+        ["howto-thermostat", "howto-dishwasher", "howto-breaker"].map((id) => store.delete("howtos", id)),
+      );
+      if ((await store.get("howtos", "howto-tv"))?.summary === "Streaming apps are already signed in.") {
+        await putFromSeed(store, "howtos", fromSeed("howtos", "howto-tv"));
+      }
+      for (const h of seed.docs.howtos) await putIfMissing("howtos", h.id);
+
+      await putIfMissing("places", "place-banfield");
+      await putIfMissing("places", "place-veg");
+
+      if ((await store.get("codes", "code-front-door"))?.value === "0000") {
+        await putFromSeed(store, "codes", fromSeed("codes", "code-front-door"));
+      }
+      if ((await store.get("codes", "code-garage"))?.value === "0000") await store.delete("codes", "code-garage");
+    },
+  },
 ];
 
 async function putFromSeed<C extends CollectionName>(

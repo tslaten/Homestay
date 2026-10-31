@@ -55,6 +55,7 @@ async function PetsContent() {
       about: p.about,
       feeding: p.feeding,
       medical: p.medical,
+      hidingSpots: p.hidingSpots,
       vet: vet && { name: vet.name, phone: vet.phone },
       today: todays
         .filter((o) => o.task.petId === p.id)
