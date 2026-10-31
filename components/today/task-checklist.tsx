@@ -17,6 +17,7 @@ export interface ChecklistItem {
   title: string;
   details?: string;
   petName?: string;
+  optional?: boolean;
   done: boolean;
   doneLabel?: string;
 }
@@ -65,7 +66,7 @@ export function TaskChecklist({
     }
   }, []);
 
-  const nextKey = optimistic.find((i) => !i.done && i.time >= currentTime)?.key;
+  const nextKey = optimistic.find((i) => !i.optional && !i.done && i.time >= currentTime)?.key;
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-4">
@@ -81,20 +82,21 @@ export function TaskChecklist({
             const from = idx === 0 ? "00:00" : PERIODS[idx - 1].until;
             const group = optimistic.filter((i) => i.time >= from && i.time < period.until);
             if (group.length === 0) return null;
+            const counted = group.filter((i) => !i.optional);
             return (
               <Fragment key={period.id}>
                 <h2 className="col-span-full flex items-center gap-3 px-1 pt-1 text-2xl">
                   <HugeiconsIcon icon={period.icon} className="size-8 text-muted-foreground" strokeWidth={2} aria-hidden />
                   {period.label}
                   <span className="font-sans text-lg font-normal text-muted-foreground">
-                    · {group.filter((i) => i.done).length} of {group.length} done
+                    · {counted.filter((i) => i.done).length} of {counted.length} done
                   </span>
                 </h2>
                 {group.map((item) => (
                   <ChecklistRow
                     key={item.key}
                     item={item}
-                    overdue={!item.done && item.time < currentTime}
+                    overdue={!item.optional && !item.done && item.time < currentTime}
                     next={item.key === nextKey}
                     onToggle={() => toggle(item)}
                   />
@@ -154,6 +156,9 @@ function ChecklistRow({
         <span className="flex flex-wrap items-center gap-x-3 gap-y-1 text-lg text-muted-foreground">
           <span className="tabular-nums">{item.timeLabel}</span>
           {item.petName && <span>· {item.petName}</span>}
+          {item.optional && !item.done && (
+            <span className="rounded-full bg-muted px-3 text-base font-medium text-muted-foreground">Optional</span>
+          )}
           {overdue && (
             <span className="rounded-full bg-destructive/15 px-3 text-base font-medium text-destructive">Overdue</span>
           )}
@@ -164,7 +169,7 @@ function ChecklistRow({
         {item.done ? (
           item.doneLabel && <span className="text-lg text-muted-foreground">Done {item.doneLabel}</span>
         ) : (
-          item.details && <span className="line-clamp-2 text-lg text-muted-foreground">{item.details}</span>
+          item.details && <span className="line-clamp-4 text-lg text-muted-foreground">{item.details}</span>
         )}
       </span>
     </button>

@@ -31,7 +31,7 @@ export interface PetView {
   feeding: string;
   medical?: string;
   vet?: { name: string; phone?: string };
-  today: { key: string; timeLabel: string; title: string; done: boolean }[];
+  today: { key: string; timeLabel: string; title: string; done: boolean; optional?: boolean }[];
 }
 
 const SPECIES: Record<Pet["species"], { label: string; icon: IconSvgElement }> = {
@@ -91,7 +91,8 @@ export function PetBrowser({ pets }: { pets: PetView[] }) {
 
 function PetDetails({ pet }: { pet: PetView }) {
   const species = SPECIES[pet.species];
-  const doneCount = pet.today.filter((t) => t.done).length;
+  const counted = pet.today.filter((t) => !t.optional);
+  const doneCount = counted.filter((t) => t.done).length;
 
   const feeding = (
     <InfoCard icon={SpoonAndForkIcon} title="Feeding">
@@ -103,7 +104,7 @@ function PetDetails({ pet }: { pet: PetView }) {
     <InfoCard
       icon={TaskDaily01Icon}
       title="Today"
-      aside={pet.today.length > 0 ? `${doneCount} of ${pet.today.length} done` : undefined}
+      aside={counted.length > 0 ? `${doneCount} of ${counted.length} done` : undefined}
     >
       {pet.today.length === 0 ? (
         <p className="text-xl text-muted-foreground">Nothing scheduled today.</p>
@@ -113,7 +114,10 @@ function PetDetails({ pet }: { pet: PetView }) {
           {pet.today.map((t) => (
             <li key={t.key} className="flex items-baseline gap-3 text-xl">
               <span className="w-24 shrink-0 tabular-nums text-muted-foreground">{t.timeLabel}</span>
-              <span className={cn("min-w-0 flex-1", t.done && "text-muted-foreground line-through")}>{t.title}</span>
+              <span className={cn("min-w-0 flex-1", t.done && "text-muted-foreground line-through")}>
+                {t.title}
+                {t.optional && <span className="text-muted-foreground"> (optional)</span>}
+              </span>
               {t.done && (
                 <HugeiconsIcon
                   icon={Tick02Icon}

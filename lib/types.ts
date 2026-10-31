@@ -61,6 +61,8 @@ export interface Task extends BaseDoc {
   petId?: string;
   schedule: TaskSchedule;
   active: boolean;
+  /** Nice-to-have (e.g. a treat): never shown as overdue and not counted in progress. */
+  optional?: boolean;
   order: number;
 }
 

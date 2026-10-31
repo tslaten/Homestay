@@ -64,6 +64,7 @@ async function TodayContent() {
       title: o.task.title,
       details: o.task.details,
       petName: o.task.petId ? petNames.get(o.task.petId) : undefined,
+      optional: o.task.optional,
       done: o.done,
       doneLabel: at ? formatTimestampTime(at) : undefined,
     };

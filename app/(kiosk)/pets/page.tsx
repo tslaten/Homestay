@@ -63,6 +63,7 @@ async function PetsContent() {
           timeLabel: formatLocalTime(o.time),
           title: o.task.title,
           done: o.done,
+          optional: o.task.optional,
         })),
     };
   });

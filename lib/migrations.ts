@@ -45,13 +45,47 @@ const MIGRATIONS: Migration[] = [
         ...completions.filter((c) => oldTasks.includes(c.taskId)).map((c) => store.delete("completions", c.id)),
       ]);
 
-      const keepTasks = new Set(["task-litter"]); // still exists; its pet link changes
       await putFromSeed(store, "pets", seed.docs.pets);
-      await putFromSeed(
-        store,
-        "tasks",
-        seed.docs.tasks.filter((t) => t.id.startsWith("task-feed-") || keepTasks.has(t.id)),
-      );
+      // Their tasks are replaced by the next migration.
+    },
+  },
+  {
+    // The cats' real daily routine replaces the sample tasks; Gunter's
+    // feeding and medication notes replace the placeholder profile text.
+    id: "2026-10-real-cat-routine",
+    async run(store) {
+      const seed = buildSeed();
+
+      const sampleTasks = [
+        "task-feed-biscuit",
+        "task-walk-biscuit",
+        "task-feed-mochi",
+        "task-feed-gunter",
+        "task-feed-eloise",
+        "task-litter",
+        "task-plants",
+        "task-trash",
+      ];
+      const present = (await Promise.all(sampleTasks.map((id) => store.get("tasks", id)))).filter(Boolean);
+      if (present.length > 0) {
+        const completions = await store.list("completions");
+        await Promise.all([
+          ...sampleTasks.map((id) => store.delete("tasks", id)),
+          ...completions.filter((c) => sampleTasks.includes(c.taskId)).map((c) => store.delete("completions", c.id)),
+        ]);
+        await putFromSeed(store, "tasks", seed.docs.tasks);
+      }
+
+      const placeholderFeeding =
+        "½ can wet food at 7:30 AM and 6:00 PM. Food is in the pantry. Keep the water fountain full.";
+      for (const fresh of seed.docs.pets) {
+        const pet = await store.get("pets", fresh.id);
+        if (pet?.feeding === placeholderFeeding) {
+          await store.put("pets", [
+            { ...pet, feeding: fresh.feeding, medical: fresh.medical, updatedAt: new Date().toISOString() },
+          ]);
+        }
+      }
     },
   },
 ];
