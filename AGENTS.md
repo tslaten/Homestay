@@ -15,3 +15,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
   so the Vercel preview deployment can be checked before merging.
 - Before pushing, run `npm run lint`, `npm run typecheck` and `npm run build`.
 - All date/time logic goes through `lib/time.ts` (America/New_York).
+- Guest pages live in `app/(kiosk)`, admin in `app/(admin)/admin`. Every guest page's data
+  component and guest Server Action calls `requireGuest()`; every admin page and admin Server
+  Action calls `requireAdmin()` (both mean "an approved device"; there is no password).
+  `proxy.ts` is only a first-pass redirect, never the sole check.

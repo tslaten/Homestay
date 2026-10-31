@@ -2,6 +2,7 @@ import "server-only";
 
 import { Redis } from "@upstash/redis";
 
+import { runMigrations } from "./migrations";
 import { buildSeed } from "./seed";
 import type {
   BaseDoc,
@@ -38,7 +39,7 @@ const collectionKey = (c: CollectionName) => `${PREFIX}:${c}`;
 // Backends
 // ---------------------------------------------------------------------------
 
-interface Store {
+export interface Store {
   getSettings(): Promise<Settings | null>;
   setSettings(settings: Settings): Promise<void>;
   get<C extends CollectionName>(c: C, id: string): Promise<Collections[C] | null>;
@@ -47,6 +48,11 @@ interface Store {
   delete(c: CollectionName, id: string): Promise<boolean>;
   isSeeded(): Promise<boolean>;
   markSeeded(): Promise<void>;
+  /** Increment a counter that expires `ttlSeconds` after its first increment. */
+  incr(key: string, ttlSeconds: number): Promise<number>;
+  /** Permanent once-only markers (used to record applied data migrations). */
+  hasFlag(key: string): Promise<boolean>;
+  setFlag(key: string): Promise<void>;
 }
 
 function redisStore(redis: Redis): Store {
@@ -77,12 +83,25 @@ function redisStore(redis: Redis): Store {
     async markSeeded() {
       await redis.set(SEEDED_KEY, "1");
     },
+    async incr(key, ttlSeconds) {
+      const n = await redis.incr(`${PREFIX}:${key}`);
+      if (n === 1) await redis.expire(`${PREFIX}:${key}`, ttlSeconds);
+      return n;
+    },
+    async hasFlag(key) {
+      return (await redis.exists(`${PREFIX}:${key}`)) === 1;
+    },
+    async setFlag(key) {
+      await redis.set(`${PREFIX}:${key}`, "1");
+    },
   };
 }
 
 function memoryStore(): Store {
   let settings: Settings | null = null;
   let seeded = false;
+  const counters = new Map<string, { n: number; expires: number }>();
+  const flags = new Set<string>();
   const data = new Map<CollectionName, Map<string, BaseDoc>>();
   const coll = (c: CollectionName) => {
     if (!data.has(c)) data.set(c, new Map());
@@ -114,6 +133,19 @@ function memoryStore(): Store {
     },
     async markSeeded() {
       seeded = true;
+    },
+    async incr(key, ttlSeconds) {
+      const now = Date.now();
+      const cur = counters.get(key);
+      const next = cur && cur.expires > now ? { ...cur, n: cur.n + 1 } : { n: 1, expires: now + ttlSeconds * 1000 };
+      counters.set(key, next);
+      return next.n;
+    },
+    async hasFlag(key) {
+      return flags.has(key);
+    },
+    async setFlag(key) {
+      flags.add(key);
     },
   };
 }
@@ -157,13 +189,16 @@ export async function seed({ force = false }: { force?: boolean } = {}): Promise
  * Seed on first access if the store is empty: always for the in-memory store,
  * and once for a fresh Redis database so a new deploy shows sample content
  * instead of blank screens. Once `homestay:seeded` exists this is one EXISTS
- * call per server instance. A failed attempt is retried on the next request.
+ * call per server instance. Then pending data migrations (lib/migrations.ts)
+ * run once. A failed attempt is retried on the next request.
  */
 async function ready(): Promise<Store> {
-  await (globalForDb.__homestaySeeding ??= seed().catch((err) => {
-    globalForDb.__homestaySeeding = undefined;
-    throw err;
-  }));
+  await (globalForDb.__homestaySeeding ??= seed()
+    .then(() => runMigrations(store))
+    .catch((err) => {
+      globalForDb.__homestaySeeding = undefined;
+      throw err;
+    }));
   return store;
 }
 
@@ -228,9 +263,17 @@ export const howtos = repo("howtos", byOrder);
 export const places = repo("places", byOrder);
 export const contacts = repo("contacts", byOrder);
 export const codes = repo("codes", byOrder);
+export const devices = repo("devices", (a, b) => a.createdAt.localeCompare(b.createdAt));
+export const pairings = repo("pairings", (a, b) => b.createdAt.localeCompare(a.createdAt));
 
 /** Everything in one object, e.g. `db.pets.list()`. */
-export const db = { stays, pets, tasks, completions, howtos, places, contacts, codes };
+export const db = { stays, pets, tasks, completions, howtos, places, contacts, codes, devices, pairings };
+
+/** Fixed-window counter in the store (used for login rate limiting). */
+export async function incrementCounter(key: string, ttlSeconds: number): Promise<number> {
+  return (await ready()).incr(key, ttlSeconds);
+}
+
 
 // ---------------------------------------------------------------------------
 // Domain helpers

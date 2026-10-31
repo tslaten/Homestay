@@ -123,6 +123,25 @@ export interface Code extends BaseDoc {
   order: number;
 }
 
+/** A browser approved to open the guest screens (e.g. the Echo Show). */
+export interface Device extends BaseDoc {
+  name: string;
+  userAgent?: string;
+  lastSeenAt: Timestamp;
+}
+
+/**
+ * A locked browser asking to be approved. It shows `code` on screen and
+ * someone matches it in admin. Once approved, `approvedAs` is the name the
+ * new Device will get when the browser next checks in.
+ */
+export interface Pairing extends BaseDoc {
+  code: string;
+  userAgent?: string;
+  expiresAt: Timestamp;
+  approvedAs?: string;
+}
+
 /** Map of collection name → document type. */
 export interface Collections {
   stays: Stay;
@@ -133,6 +152,8 @@ export interface Collections {
   places: Place;
   contacts: Contact;
   codes: Code;
+  devices: Device;
+  pairings: Pairing;
 }
 
 export type CollectionName = keyof Collections;

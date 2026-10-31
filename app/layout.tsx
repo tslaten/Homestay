@@ -1,8 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { JetBrains_Mono, Nunito, PT_Serif } from "next/font/google";
 
-import { AutoRefresh } from "@/components/kiosk/auto-refresh";
-
 import "./globals.css";
 
 // Font variables consumed by the theme in globals.css:
@@ -17,30 +15,23 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-// Kiosk: fill the screen exactly and block accidental pinch-zoom.
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
   viewportFit: "cover",
 };
 
 /**
- * Full-screen kiosk shell. No nav bar, tabs or breadcrumbs: Home is a tile
- * grid and every other screen renders <ScreenHeader> with a Home button.
- * Each screen owns the viewport (h-dvh) and scrolls internally if needed.
+ * Shared root: fonts and theme only. The guest screens live in app/(kiosk)
+ * and the host's editor in app/(admin); each group's layout sets its own feel.
  */
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${nunito.variable} ${ptSerif.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`${nunito.variable} ${ptSerif.variable} ${jetbrainsMono.variable} antialiased`}
     >
-      <body className="flex h-dvh flex-col overflow-hidden">
-        {children}
-        <AutoRefresh />
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

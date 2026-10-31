@@ -14,15 +14,15 @@ export function buildSeed(now: Date = new Date()): { settings: Settings; docs: S
   const stamp = now.toISOString();
 
   const settings: Settings = {
-    propertyName: "The Lakehouse",
+    propertyName: "Tricky",
     address: "123 Sample Street, Orlando, FL 32801",
     hostName: "Your Host",
     welcomeMessage: "Make yourself at home. Everything you need is on this screen.",
     checkInTime: "16:00",
     checkOutTime: "10:00",
-    wifi: { ssid: "Lakehouse-Guest", password: "change-me-please", security: "WPA" },
+    wifi: { ssid: "Tricky-Guest", password: "change-me-please", security: "WPA" },
     houseRules: [
-      "Please keep the back gate latched so the dog can't get out.",
+      "Please keep outside doors closed so the cats stay inside.",
       "Quiet hours are 10 PM – 7 AM.",
       "No smoking inside the house.",
     ],
@@ -78,22 +78,20 @@ export function buildSeed(now: Date = new Date()): { settings: Settings; docs: S
 
     pets: [
       {
-        id: "pet-biscuit",
-        name: "Biscuit",
-        species: "dog",
-        breed: "Golden Retriever",
-        about: "Friendly and food-motivated. Loves the lake path walk.",
-        feeding: "1 cup kibble at 7:30 AM and 6:00 PM. Food is in the pantry bin.",
-        medical: "Heartworm chew on the 1st of each month.",
+        id: "pet-gunter",
+        name: "Gunter",
+        species: "cat",
+        about: "One of the two resident cats.",
+        feeding: "½ can wet food at 7:30 AM and 6:00 PM. Food is in the pantry. Keep the water fountain full.",
         vetContactId: "contact-vet",
         order: 1,
       },
       {
-        id: "pet-mochi",
-        name: "Mochi",
+        id: "pet-eloise",
+        name: "Eloise",
         species: "cat",
-        about: "Shy at first. Usually hides under the guest bed for a day.",
-        feeding: "½ can wet food at 7:30 AM and 6:00 PM. Keep the water fountain full.",
+        about: "One of the two resident cats.",
+        feeding: "½ can wet food at 7:30 AM and 6:00 PM. Food is in the pantry. Keep the water fountain full.",
         vetContactId: "contact-vet",
         order: 2,
       },
@@ -101,41 +99,30 @@ export function buildSeed(now: Date = new Date()): { settings: Settings; docs: S
 
     tasks: [
       {
-        id: "task-feed-biscuit",
-        title: "Feed Biscuit",
+        id: "task-feed-gunter",
+        title: "Feed Gunter",
         category: "pet",
-        petId: "pet-biscuit",
+        petId: "pet-gunter",
         schedule: { type: "daily", times: ["07:30", "18:00"] },
         active: true,
         order: 1,
       },
       {
-        id: "task-walk-biscuit",
-        title: "Walk Biscuit",
-        details: "Leash is on the hook by the back door.",
+        id: "task-feed-eloise",
+        title: "Feed Eloise",
         category: "pet",
-        petId: "pet-biscuit",
-        schedule: { type: "daily", times: ["08:00", "19:00"] },
-        active: true,
-        order: 2,
-      },
-      {
-        id: "task-feed-mochi",
-        title: "Feed Mochi",
-        category: "pet",
-        petId: "pet-mochi",
+        petId: "pet-eloise",
         schedule: { type: "daily", times: ["07:30", "18:00"] },
         active: true,
-        order: 3,
+        order: 2,
       },
       {
         id: "task-litter",
         title: "Scoop litter box",
         category: "pet",
-        petId: "pet-mochi",
         schedule: { type: "daily", times: ["09:00"] },
         active: true,
-        order: 4,
+        order: 3,
       },
       {
         id: "task-plants",
@@ -143,7 +130,7 @@ export function buildSeed(now: Date = new Date()): { settings: Settings; docs: S
         category: "plants",
         schedule: { type: "weekly", days: [1, 4], time: "09:00" },
         active: true,
-        order: 5,
+        order: 4,
       },
       {
         id: "task-trash",
@@ -152,11 +139,13 @@ export function buildSeed(now: Date = new Date()): { settings: Settings; docs: S
         category: "trash",
         schedule: { type: "weekly", days: [2], time: "19:00" },
         active: true,
-        order: 6,
+        order: 5,
       },
     ],
 
     completions: [],
+    devices: [],
+    pairings: [],
 
     howtos: [
       {

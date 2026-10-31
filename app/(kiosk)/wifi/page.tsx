@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { requireGuest } from "@/lib/auth/device";
 import { io } from "next/cache";
 import QRCode from "qrcode";
 import { LockPasswordIcon, SmartPhone01Icon, Wifi01Icon } from "@hugeicons/core-free-icons";
@@ -23,6 +24,7 @@ export default function WifiPage() {
 
 async function WifiContent() {
   await io();
+  await requireGuest();
   const { wifi } = await getSettings();
 
   // Scanners need maximum contrast, so the code is always black on white
