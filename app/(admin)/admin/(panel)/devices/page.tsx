@@ -5,8 +5,7 @@ import { ConfirmSubmit } from "@/components/admin/confirm-submit";
 import { AutoRefresh } from "@/components/kiosk/auto-refresh";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { listPendingPairings } from "@/lib/auth/device";
-import { requireAdmin } from "@/lib/auth/session";
+import { guessDeviceName, listPendingPairings, requireAdmin } from "@/lib/auth/device";
 import { devices } from "@/lib/db";
 import { formatTimestamp } from "@/lib/time";
 
@@ -17,7 +16,8 @@ export default function DevicesPage() {
     <>
       <h1 className="text-3xl">Devices</h1>
       <p className="mt-1 mb-6 text-muted-foreground">
-        Only approved screens can open the guest guide. Open the site on the Echo Show, then approve the code it shows.
+        Only approved screens can open the guest guide and this admin. To add one, open the site on it and approve
+        the code it shows here.
       </p>
       <Suspense fallback={<div className="h-64 animate-pulse rounded-2xl bg-muted" />}>
         <DevicesContent />
@@ -29,7 +29,7 @@ export default function DevicesPage() {
 }
 
 async function DevicesContent() {
-  await requireAdmin();
+  const me = await requireAdmin();
   const [pending, approved] = await Promise.all([listPendingPairings(), devices.list()]);
 
   return (
@@ -60,7 +60,7 @@ async function DevicesContent() {
                   <input type="hidden" name="pairingId" value={p.id} />
                   <label className="flex min-w-48 flex-1 flex-col gap-2">
                     <span className="font-heading text-sm font-bold">Name</span>
-                    <Input name="name" defaultValue={guessName(p.userAgent)} maxLength={60} />
+                    <Input name="name" defaultValue={guessDeviceName(p.userAgent)} maxLength={60} />
                   </label>
                   <Button type="submit" size="compact">
                     Approve
@@ -88,7 +88,10 @@ async function DevicesContent() {
           approved.map((d) => (
             <div key={d.id} className="flex flex-wrap items-center gap-4 rounded-2xl border bg-card p-4 shadow-sm">
               <div className="min-w-0 flex-1">
-                <p className="font-heading text-lg font-bold">{d.name}</p>
+                <p className="font-heading text-lg font-bold">
+                  {d.name}
+                  {d.id === me.id && <span className="ml-2 font-sans text-sm font-normal text-muted-foreground">(this screen)</span>}
+                </p>
                 <p className="text-sm text-muted-foreground">
                   {describeBrowser(d.userAgent)} · approved {formatTimestamp(d.createdAt)} · last seen{" "}
                   {formatTimestamp(d.lastSeenAt)}
@@ -99,7 +102,13 @@ async function DevicesContent() {
                 <ConfirmSubmit
                   size="compact"
                   variant="outline"
-                  message={`Remove “${d.name}”? It will show the pairing screen until you approve it again.`}
+                  message={
+                    approved.length === 1
+                      ? `Remove “${d.name}”? It’s the only approved screen, so the next browser to open the site will be approved automatically.`
+                      : d.id === me.id
+                        ? `Remove this screen? You’ll lose access to admin here until another screen approves it again.`
+                        : `Remove “${d.name}”? It will show the pairing screen until you approve it again.`
+                  }
                 >
                   Remove
                 </ConfirmSubmit>
@@ -120,8 +129,4 @@ function describeBrowser(ua?: string): string {
   if (/Mac OS X/i.test(ua)) return "Mac";
   if (/Windows/i.test(ua)) return "Windows";
   return "Browser";
-}
-
-function guessName(ua?: string): string {
-  return ua && /Silk/i.test(ua) ? "Echo Show" : "Guest screen";
 }

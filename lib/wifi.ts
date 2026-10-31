@@ -9,7 +9,7 @@ function escape(value: string): string {
 
 /**
  * Payload phones understand when scanning a Wi-Fi QR code, e.g.
- * `WIFI:T:WPA;S:Lakehouse-Guest;P:secret;;`
+ * `WIFI:T:WPA;S:Tricky-Guest;P:secret;;`
  */
 export function wifiQrPayload(wifi: Wifi): string {
   const parts = [`T:${wifi.security}`, `S:${escape(wifi.ssid)}`];

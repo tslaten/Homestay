@@ -1,29 +1,16 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-import { COOKIE, verifyToken } from "@/lib/auth/token";
-
 /**
- * First line of defence: send requests without a valid signed cookie to the
- * right door. This only checks signatures (no database), so a revoked device
- * still gets past here — the real checks are requireGuest() / requireAdmin()
- * in every page and Server Action.
+ * First line of defence: browsers without a device cookie go to the locked
+ * screen. This only checks that the cookie exists (no database), so it is an
+ * early redirect, not the security boundary — requireGuest() / requireAdmin()
+ * check the device against the store in every page and Server Action.
+ *
+ * Keep this cookie name in sync with DEVICE_COOKIE in lib/auth/device.ts
+ * (that module is server-only, so it isn't imported here).
  */
-export async function proxy(request: NextRequest) {
-  const { pathname, search } = request.nextUrl;
-  const admin = await verifyToken(request.cookies.get(COOKIE.admin)?.value, "admin");
-
-  if (pathname === "/admin/login") return NextResponse.next();
-
-  if (pathname === "/admin" || pathname.startsWith("/admin/")) {
-    if (admin) return NextResponse.next();
-    const url = new URL("/admin/login", request.url);
-    url.searchParams.set("next", pathname + search);
-    return NextResponse.redirect(url);
-  }
-
-  // Guest screens: an approved device, or the host previewing.
-  if (admin) return NextResponse.next();
-  if (await verifyToken(request.cookies.get(COOKIE.device)?.value, "device")) return NextResponse.next();
+export function proxy(request: NextRequest) {
+  if (request.cookies.has("hs_device")) return NextResponse.next();
   return NextResponse.redirect(new URL("/locked", request.url));
 }
 

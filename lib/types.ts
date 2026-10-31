@@ -131,14 +131,15 @@ export interface Device extends BaseDoc {
 }
 
 /**
- * A locked browser asking to be approved. It shows `code` on screen; the
- * host matches it in admin. Once approved, `deviceId` points at the Device.
+ * A locked browser asking to be approved. It shows `code` on screen and
+ * someone matches it in admin. Once approved, `approvedAs` is the name the
+ * new Device will get when the browser next checks in.
  */
 export interface Pairing extends BaseDoc {
   code: string;
   userAgent?: string;
   expiresAt: Timestamp;
-  deviceId?: string;
+  approvedAs?: string;
 }
 
 /** Map of collection name → document type. */

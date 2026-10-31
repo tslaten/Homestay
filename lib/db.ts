@@ -2,6 +2,7 @@ import "server-only";
 
 import { Redis } from "@upstash/redis";
 
+import { runMigrations } from "./migrations";
 import { buildSeed } from "./seed";
 import type {
   BaseDoc,
@@ -38,7 +39,7 @@ const collectionKey = (c: CollectionName) => `${PREFIX}:${c}`;
 // Backends
 // ---------------------------------------------------------------------------
 
-interface Store {
+export interface Store {
   getSettings(): Promise<Settings | null>;
   setSettings(settings: Settings): Promise<void>;
   get<C extends CollectionName>(c: C, id: string): Promise<Collections[C] | null>;
@@ -49,7 +50,9 @@ interface Store {
   markSeeded(): Promise<void>;
   /** Increment a counter that expires `ttlSeconds` after its first increment. */
   incr(key: string, ttlSeconds: number): Promise<number>;
-  resetCounter(key: string): Promise<void>;
+  /** Permanent once-only markers (used to record applied data migrations). */
+  hasFlag(key: string): Promise<boolean>;
+  setFlag(key: string): Promise<void>;
 }
 
 function redisStore(redis: Redis): Store {
@@ -85,8 +88,11 @@ function redisStore(redis: Redis): Store {
       if (n === 1) await redis.expire(`${PREFIX}:${key}`, ttlSeconds);
       return n;
     },
-    async resetCounter(key) {
-      await redis.del(`${PREFIX}:${key}`);
+    async hasFlag(key) {
+      return (await redis.exists(`${PREFIX}:${key}`)) === 1;
+    },
+    async setFlag(key) {
+      await redis.set(`${PREFIX}:${key}`, "1");
     },
   };
 }
@@ -95,6 +101,7 @@ function memoryStore(): Store {
   let settings: Settings | null = null;
   let seeded = false;
   const counters = new Map<string, { n: number; expires: number }>();
+  const flags = new Set<string>();
   const data = new Map<CollectionName, Map<string, BaseDoc>>();
   const coll = (c: CollectionName) => {
     if (!data.has(c)) data.set(c, new Map());
@@ -134,8 +141,11 @@ function memoryStore(): Store {
       counters.set(key, next);
       return next.n;
     },
-    async resetCounter(key) {
-      counters.delete(key);
+    async hasFlag(key) {
+      return flags.has(key);
+    },
+    async setFlag(key) {
+      flags.add(key);
     },
   };
 }
@@ -179,13 +189,16 @@ export async function seed({ force = false }: { force?: boolean } = {}): Promise
  * Seed on first access if the store is empty: always for the in-memory store,
  * and once for a fresh Redis database so a new deploy shows sample content
  * instead of blank screens. Once `homestay:seeded` exists this is one EXISTS
- * call per server instance. A failed attempt is retried on the next request.
+ * call per server instance. Then pending data migrations (lib/migrations.ts)
+ * run once. A failed attempt is retried on the next request.
  */
 async function ready(): Promise<Store> {
-  await (globalForDb.__homestaySeeding ??= seed().catch((err) => {
-    globalForDb.__homestaySeeding = undefined;
-    throw err;
-  }));
+  await (globalForDb.__homestaySeeding ??= seed()
+    .then(() => runMigrations(store))
+    .catch((err) => {
+      globalForDb.__homestaySeeding = undefined;
+      throw err;
+    }));
   return store;
 }
 
@@ -261,9 +274,6 @@ export async function incrementCounter(key: string, ttlSeconds: number): Promise
   return (await ready()).incr(key, ttlSeconds);
 }
 
-export async function resetCounter(key: string): Promise<void> {
-  return (await ready()).resetCounter(key);
-}
 
 // ---------------------------------------------------------------------------
 // Domain helpers

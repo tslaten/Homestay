@@ -3,8 +3,7 @@ import Link from "next/link";
 import { ArrowRight01Icon, Settings02Icon, SmartPhone01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
 
-import { listPendingPairings } from "@/lib/auth/device";
-import { requireAdmin } from "@/lib/auth/session";
+import { listPendingPairings, requireAdmin } from "@/lib/auth/device";
 import { devices, getSettings } from "@/lib/db";
 
 export const metadata = { title: "Guest Guide admin" };

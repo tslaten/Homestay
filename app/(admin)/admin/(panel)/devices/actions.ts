@@ -2,8 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { approvePairing } from "@/lib/auth/device";
-import { requireAdmin } from "@/lib/auth/session";
+import { approvePairing, requireAdmin } from "@/lib/auth/device";
 import { devices, pairings } from "@/lib/db";
 
 export async function approveDevice(formData: FormData) {

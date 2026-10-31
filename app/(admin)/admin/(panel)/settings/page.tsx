@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 
+import { requireAdmin } from "@/lib/auth/device";
 import { SettingsForm } from "@/components/admin/settings-form";
-import { requireAdmin } from "@/lib/auth/session";
 import { getSettings } from "@/lib/db";
 
 export const metadata = { title: "Settings · Guest Guide admin" };

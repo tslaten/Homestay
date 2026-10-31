@@ -22,12 +22,13 @@ npm run db:seed -- --force
 
 ## Admin and the screen lock
 
-- `/admin` is the host's editor. Set `ADMIN_PASSWORD` (a long passphrase) in Vercel →
-  Settings → Environment Variables. Optionally set `SESSION_SECRET` too, so you can change
-  the password later without re-approving screens.
-- Guest screens only open on approved devices. Open the site on the Echo Show: it shows a
-  6-digit code. On your phone, sign in to `/admin/devices` and approve that code.
-- A signed-in host can also view the guest screens.
+There is no password. Guest screens and `/admin` only open on **approved devices**.
+
+- The first browser to open a fresh deployment is approved automatically (do this on the
+  Echo Show or your phone straight after deploying).
+- Any other browser shows a 6-digit code. On an approved device, open `/admin/devices` and
+  approve it. Removing a device locks it out again.
+- If every device is removed, the next browser to open the site is approved automatically.
 
 ## Deploy
 

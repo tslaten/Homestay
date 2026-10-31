@@ -5,13 +5,11 @@ import { usePathname } from "next/navigation";
 import {
   ArrowUpRight01Icon,
   DashboardSquare01Icon,
-  Logout03Icon,
   Settings02Icon,
   SmartPhone01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 
-import { logout } from "@/app/(admin)/admin/actions";
 import { cn } from "@/lib/utils";
 
 const LINKS = [
@@ -44,15 +42,9 @@ export function AdminNav() {
         })}
         <span className="flex-1" />
         <Link href="/" className={cn(linkClass, "text-muted-foreground")}>
-          <span className="sr-only sm:not-sr-only">Guest view</span>
+          Guest view
           <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-5" strokeWidth={2} aria-hidden />
         </Link>
-        <form action={logout}>
-          <button type="submit" className={cn(linkClass, "text-muted-foreground")}>
-            <HugeiconsIcon icon={Logout03Icon} className="size-5" strokeWidth={2} aria-hidden />
-            <span className="sr-only sm:not-sr-only">Sign out</span>
-          </button>
-        </form>
       </div>
     </header>
   );

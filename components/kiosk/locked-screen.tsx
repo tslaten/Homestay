@@ -51,31 +51,19 @@ export function LockedScreen() {
         <HugeiconsIcon icon={SquareLock02Icon} className="size-14" strokeWidth={2} />
       </span>
 
-      {state.status === "unconfigured" ? (
-        <>
-          <h1 className="text-5xl">Almost ready</h1>
-          <p className="max-w-3xl text-2xl leading-snug text-muted-foreground">
-            The host needs to set an admin password (ADMIN_PASSWORD) in Vercel before this screen can be approved.
-          </p>
-        </>
-      ) : (
-        <>
-          <h1 className="text-5xl">Approve this screen</h1>
+      <h1 className="text-5xl">Approve this screen</h1>
           <div className="rounded-3xl border bg-card px-12 py-6 shadow-sm">
             <p className="text-xl text-muted-foreground">Pairing code</p>
             <p className="font-mono text-8xl font-bold tracking-widest tabular-nums" aria-live="polite">
               {state.status === "pending" ? `${state.code.slice(0, 3)} ${state.code.slice(3)}` : "··· ···"}
             </p>
           </div>
-          <p className="max-w-3xl text-2xl leading-snug text-muted-foreground">
-            On your phone, open <span className="font-bold text-foreground">{host || "this site"}/admin/devices</span>{" "}
-            and approve this code. This screen opens by itself once it’s approved.
-          </p>
-          {state.status === "error" && (
-            <p className="text-xl text-destructive">Can’t reach the server — retrying…</p>
-          )}
-        </>
-      )}
+      <p className="max-w-3xl text-2xl leading-snug text-muted-foreground">
+        On a screen that’s already approved, open{" "}
+        <span className="font-bold text-foreground">{host || "this site"}/admin/devices</span> and approve this code.
+        This screen opens by itself once it’s approved.
+      </p>
+      {state.status === "error" && <p className="text-xl text-destructive">Can’t reach the server — retrying…</p>}
     </main>
   );
 }

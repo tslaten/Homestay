@@ -1,6 +1,6 @@
 import { AdminNav } from "@/components/admin/admin-nav";
 
-/** Signed-in admin shell. Each page still calls requireAdmin() itself. */
+/** Admin shell (approved devices only). Each page still calls requireAdmin() itself. */
 export default function PanelLayout({ children }: LayoutProps<"/admin">) {
   return (
     <>
