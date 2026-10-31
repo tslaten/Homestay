@@ -1,5 +1,5 @@
-import type { Completion, ISODate, LocalTime, Task } from "./types";
-import { weekdayOf } from "./time";
+import type { Completion, ISODate, LocalTime, Task, TaskSchedule } from "./types";
+import { formatLocalTime, formatShortDate, weekdayOf } from "./time";
 
 export interface Occurrence {
   task: Task;
@@ -35,4 +35,18 @@ export function occurrencesOn(tasks: Task[], completions: Completion[], date: IS
       slotsOn(task, date).map((time) => ({ task, date, time, done: done.has(`${task.id}@${time}`) })),
     )
     .sort((a, b) => a.time.localeCompare(b.time) || a.task.order - b.task.order);
+}
+
+const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+/** "Daily · 8:00 AM, 7:00 PM" / "Mon, Thu · 9:00 AM" / "Once · Nov 9, 8:00 AM" */
+export function describeSchedule(s: TaskSchedule): string {
+  switch (s.type) {
+    case "daily":
+      return `Daily · ${[...s.times].sort().map(formatLocalTime).join(", ")}`;
+    case "weekly":
+      return `${[...s.days].sort().map((d) => WEEKDAYS[d]).join(", ")} · ${formatLocalTime(s.time)}`;
+    case "once":
+      return `Once · ${formatShortDate(s.date)}, ${formatLocalTime(s.time)}`;
+  }
 }

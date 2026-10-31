@@ -1,10 +1,10 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { ArrowRight01Icon, Settings02Icon } from "@hugeicons/core-free-icons";
+import { ArrowRight01Icon, PawPrintIcon, Settings02Icon, Task01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
 
 import { requireAdmin } from "@/lib/auth/access";
-import { getSettings } from "@/lib/db";
+import { getSettings, pets, tasks } from "@/lib/db";
 
 export const metadata = { title: "Guest Guide admin" };
 
@@ -21,10 +21,18 @@ export default function AdminHome() {
 
 async function DashboardContent() {
   await requireAdmin();
-  const settings = await getSettings();
+  const [settings, taskList, petList] = await Promise.all([getSettings(), tasks.list(), pets.list()]);
+  const activeTasks = taskList.filter((t) => t.active).length;
 
   return (
     <div className="flex flex-col gap-3">
+      <Tile
+        href="/admin/tasks"
+        icon={Task01Icon}
+        title="Tasks"
+        detail={`${activeTasks} active${taskList.length > activeTasks ? `, ${taskList.length - activeTasks} paused` : ""}`}
+      />
+      <Tile href="/admin/pets" icon={PawPrintIcon} title="Pets" detail={petList.map((p) => p.name).join(" & ") || "None yet"} />
       <Tile
         href="/admin/settings"
         icon={Settings02Icon}
@@ -32,7 +40,7 @@ async function DashboardContent() {
         detail={`${settings.propertyName} · Wi-Fi “${settings.wifi.ssid}”`}
       />
       <p className="mt-4 text-sm text-muted-foreground">
-        Editing pets, tasks, stays, guides, places, contacts and codes is coming next.
+        Editing stays, guides, places, contacts and codes is coming next.
       </p>
     </div>
   );
