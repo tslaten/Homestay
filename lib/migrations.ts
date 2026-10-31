@@ -158,6 +158,32 @@ const MIGRATIONS: Migration[] = [
       if ((await store.get("codes", "code-garage"))?.value === "0000") await store.delete("codes", "code-garage");
     },
   },
+  {
+    // The house's street address, the host's name and phone, and a Monday
+    // night reminder to put the trash out for Tuesday collection.
+    id: "2026-11-address-host-trash",
+    async run(store) {
+      const seed = buildSeed();
+
+      const settings = await store.getSettings();
+      if (settings && (settings.address.startsWith("123 Sample Street") || settings.hostName === "Your Host")) {
+        await store.setSettings({
+          ...settings,
+          address: settings.address.startsWith("123 Sample Street") ? seed.settings.address : settings.address,
+          hostName: settings.hostName === "Your Host" ? seed.settings.hostName : settings.hostName,
+          updatedAt: new Date().toISOString(),
+        });
+      }
+
+      if ((await store.get("contacts", "contact-host"))?.phone === "(407) 555-0100") {
+        await putFromSeed(store, "contacts", seed.docs.contacts.filter((c) => c.id === "contact-host"));
+      }
+
+      if (!(await store.get("tasks", "task-trash-monday"))) {
+        await putFromSeed(store, "tasks", seed.docs.tasks.filter((t) => t.id === "task-trash-monday"));
+      }
+    },
+  },
 ];
 
 async function putFromSeed<C extends CollectionName>(
