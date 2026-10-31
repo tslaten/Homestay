@@ -252,6 +252,28 @@ export const codes = repo("codes", byOrder);
 /** Everything in one object, e.g. `db.pets.list()`. */
 export const db = { stays, pets, tasks, completions, howtos, places, contacts, codes };
 
+type OrderedCollection = "pets" | "tasks" | "howtos" | "places" | "contacts" | "codes";
+
+/** Order value that puts a new document at the end of its list. */
+export async function nextOrder(c: OrderedCollection): Promise<number> {
+  const all = await db[c].list();
+  return all.reduce((max, d) => Math.max(max, d.order), 0) + 1;
+}
+
+/**
+ * Move a document one place up or down in its list (by `order`). Orders are
+ * renumbered 1..n first, so ties and gaps from earlier edits can't get stuck.
+ */
+export async function moveInOrder(c: OrderedCollection, id: string, direction: "up" | "down"): Promise<void> {
+  const s = await ready();
+  const list = (await db[c].list()).map((d, i) => ({ ...d, order: i + 1 }));
+  const i = list.findIndex((d) => d.id === id);
+  const j = direction === "up" ? i - 1 : i + 1;
+  if (i < 0 || j < 0 || j >= list.length) return;
+  [list[i].order, list[j].order] = [list[j].order, list[i].order];
+  await s.put(c, list as never);
+}
+
 // ---------------------------------------------------------------------------
 // Domain helpers
 // ---------------------------------------------------------------------------
