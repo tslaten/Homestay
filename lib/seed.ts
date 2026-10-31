@@ -13,8 +13,8 @@ export function buildSeed(now: Date = new Date()): { settings: Settings; docs: S
 
   const settings: Settings = {
     propertyName: "Tricky",
-    address: "123 Sample Street, Orlando, FL 32801",
-    hostName: "Your Host",
+    address: "3321 Clemwood Dr, Orlando, FL 32803",
+    hostName: "Troy",
     welcomeMessage: "Make yourself at home. Everything you need is on this screen.",
     checkInTime: "16:00",
     checkOutTime: "10:00",
@@ -40,10 +40,9 @@ export function buildSeed(now: Date = new Date()): { settings: Settings; docs: S
     contacts: [
       {
         id: "contact-host",
-        name: "Your Host",
+        name: "Troy",
         role: "Homeowner",
-        phone: "(407) 555-0100",
-        notes: "Text first, call if urgent.",
+        phone: "(352) 613-4447",
         emergency: false,
         order: 1,
       },
@@ -204,6 +203,15 @@ export function buildSeed(now: Date = new Date()): { settings: Settings; docs: S
         schedule: { type: "daily", times: ["19:00"] },
         active: true,
         order: 9,
+      },
+      {
+        id: "task-trash-monday",
+        title: "Take the trash out",
+        details: "Trash day is Tuesday, so put the bins out tonight.",
+        category: "trash",
+        schedule: { type: "weekly", days: [1], time: "19:00" },
+        active: true,
+        order: 10,
       },
       {
         id: "task-bouncy-ball",
