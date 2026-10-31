@@ -45,6 +45,8 @@ export interface Pet extends BaseDoc {
   medical?: string;
   /** Contact.id of the vet. */
   vetContactId?: string;
+  /** Where the pet tends to hide, so the sitter can find them. */
+  hidingSpots?: string[];
   order: number;
 }
 
@@ -80,7 +82,7 @@ export interface Completion extends BaseDoc {
 
 export interface HowTo extends BaseDoc {
   title: string;
-  category: "appliances" | "entertainment" | "climate" | "outdoor" | "safety" | "other";
+  category: "pets" | "appliances" | "entertainment" | "climate" | "outdoor" | "safety" | "other";
   summary?: string;
   steps: string[];
   order: number;

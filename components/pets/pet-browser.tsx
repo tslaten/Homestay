@@ -9,6 +9,7 @@ import {
   FishIcon,
   Medicine02Icon,
   PawPrintIcon,
+  Search01Icon,
   SpoonAndForkIcon,
   StethoscopeIcon,
   TaskDaily01Icon,
@@ -30,6 +31,7 @@ export interface PetView {
   about: string;
   feeding: string;
   medical?: string;
+  hidingSpots?: string[];
   vet?: { name: string; phone?: string };
   today: { key: string; timeLabel: string; title: string; done: boolean; optional?: boolean }[];
 }
@@ -139,6 +141,16 @@ function PetDetails({ pet }: { pet: PetView }) {
     </InfoCard>
   );
 
+  const hiding = pet.hidingSpots && pet.hidingSpots.length > 0 && (
+    <InfoCard icon={Search01Icon} title="Hiding spots">
+      <ul className="flex list-disc flex-col gap-1 pl-6 text-xl leading-snug">
+        {pet.hidingSpots.map((spot) => (
+          <li key={spot}>{spot}</li>
+        ))}
+      </ul>
+    </InfoCard>
+  );
+
   const medical = pet.medical && (
     <InfoCard icon={Medicine02Icon} title="Medical">
       <p className="text-xl leading-snug">{pet.medical}</p>
@@ -179,8 +191,13 @@ function PetDetails({ pet }: { pet: PetView }) {
         <div className="flex flex-col gap-4">
           {feeding}
           {medical}
+          {/* Hiding spots go in whichever column is shorter. */}
+          {!medical && hiding}
         </div>
-        <div className="flex flex-col gap-4">{today}</div>
+        <div className="flex flex-col gap-4">
+          {today}
+          {medical && hiding}
+        </div>
       </div>
     </div>
   );
