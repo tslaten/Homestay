@@ -353,6 +353,9 @@ export function buildSeed(now: Date = new Date()): { settings: Settings; docs: S
           ["place-sticky-rice", "Sticky Rice", "Lao street food."],
           ["place-black-bean-deli", "Black Bean Deli", "Solid Cuban food and empanadas."],
           ["place-sampaguita", "Sampaguita", "Filipino-inspired ice cream flavors."],
+          ["place-jam-hot-chicken", "Jam Hot Chicken", "A really good chicken sandwich."],
+          ["place-buttermilk-bakery", "Buttermilk Bakery", "The best baked goods in Orlando."],
+          ["place-7bites", "7Bites", "Southern-style, indulgent breakfast."],
         ] as const
       ).map(([id, name, description], i) => ({ id, name, category: "food" as const, description, order: 30 + i })),
     ],

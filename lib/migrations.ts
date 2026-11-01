@@ -198,6 +198,18 @@ const MIGRATIONS: Migration[] = [
       await putFromSeed(store, "places", missing);
     },
   },
+  {
+    // Three more food picks, added after the one above may already have run.
+    id: "2026-11-more-orlando-picks",
+    async run(store) {
+      const ids = ["place-jam-hot-chicken", "place-buttermilk-bakery", "place-7bites"];
+      const missing = [];
+      for (const p of buildSeed().docs.places.filter((p) => ids.includes(p.id))) {
+        if (!(await store.get("places", p.id))) missing.push(p);
+      }
+      await putFromSeed(store, "places", missing);
+    },
+  },
 ];
 
 async function putFromSeed<C extends CollectionName>(
