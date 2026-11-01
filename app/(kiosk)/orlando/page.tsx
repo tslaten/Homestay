@@ -62,15 +62,15 @@ async function OrlandoContent() {
 function OrlandoSkeleton() {
   return (
     <div className="flex flex-1 flex-col gap-4" aria-busy>
-      <div className="flex gap-3 overflow-hidden">
+      <div className="flex flex-wrap gap-2 overflow-hidden md:flex-nowrap md:gap-3">
         {Array.from({ length: 5 }, (_, i) => (
           <div key={i} className="h-11 w-28 shrink-0 animate-pulse rounded-full bg-muted md:h-14 md:w-36" />
         ))}
       </div>
       <div className="flex flex-1 flex-col gap-4 md:flex-row md:gap-6">
-        <div className="flex gap-2 overflow-hidden md:w-96 md:flex-col">
+        <div className="flex flex-col gap-2 overflow-hidden md:w-96">
           {Array.from({ length: 4 }, (_, i) => (
-            <div key={i} className="h-16 w-64 shrink-0 animate-pulse rounded-2xl bg-muted md:h-20 md:w-auto" />
+            <div key={i} className="h-16 w-full animate-pulse rounded-2xl bg-muted md:h-20" />
           ))}
         </div>
         <div className="h-72 flex-1 animate-pulse rounded-3xl bg-muted" />

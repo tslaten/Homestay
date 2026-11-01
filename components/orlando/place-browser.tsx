@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import {
+  ArrowDown01Icon,
   Call02Icon,
   Car01Icon,
   Coffee01Icon,
@@ -51,6 +52,8 @@ type Filter = "all" | "favorites" | Place["category"];
 export function PlaceBrowser({ places }: { places: PlaceView[] }) {
   const [filter, setFilter] = useState<Filter>("all");
   const [selectedId, setSelectedId] = useState(places[0]?.id);
+  // Phones: the tapped place expands inline in the list; tap again to collapse.
+  const [openId, setOpenId] = useState<string | null>(null);
 
   const visible = places.filter((p) =>
     filter === "all" ? true : filter === "favorites" ? p.favorite : p.category === filter,
@@ -67,7 +70,7 @@ export function PlaceBrowser({ places }: { places: PlaceView[] }) {
 
   return (
     <div className="flex flex-col gap-3 md:min-h-0 md:flex-1 md:gap-4">
-      <div role="toolbar" aria-label="Filter places" className="flex shrink-0 gap-2 overflow-x-auto p-1 md:gap-3">
+      <div role="toolbar" aria-label="Filter places" className="flex shrink-0 flex-wrap gap-2 p-1 md:flex-nowrap md:gap-3 md:overflow-x-auto">
         {chips.map((chip) => {
           const active = chip.id === filter;
           return (
@@ -91,31 +94,39 @@ export function PlaceBrowser({ places }: { places: PlaceView[] }) {
       </div>
 
       <div className="flex flex-col gap-4 md:min-h-0 md:flex-1 md:flex-row md:gap-6">
-        {/* Phones: places scroll sideways above the details. */}
+        {/* Phones: a vertical list where the tapped place expands in place. Echo Show: list + detail pane. */}
         <ul
           aria-label="Places"
-          className="flex shrink-0 gap-2 overflow-x-auto p-1 md:w-96 md:flex-col md:overflow-x-visible md:overflow-y-auto md:overscroll-contain"
+          className="flex shrink-0 flex-col gap-2 p-1 md:w-96 md:overflow-y-auto md:overscroll-contain"
         >
           {visible.map((p) => {
             const selected = p.id === place?.id;
+            const open = p.id === openId;
             const cat = CATEGORIES[p.category];
             return (
-              <li key={p.id} className="w-64 shrink-0 md:w-auto">
+              <li key={p.id} className="w-full">
                 <button
                   type="button"
                   aria-current={selected ? "true" : undefined}
-                  onClick={() => setSelectedId(p.id)}
+                  aria-expanded={open}
+                  onClick={() => {
+                    setSelectedId(p.id);
+                    setOpenId(open ? null : p.id);
+                  }}
                   className={cn(
                     "flex min-h-touch w-full items-center gap-3 rounded-2xl border p-2 text-left md:gap-4 md:p-3",
                     "touch-manipulation transition-[transform,background-color] duration-100 active:scale-[0.98]",
                     "outline-none focus-visible:ring-4 focus-visible:ring-ring/50",
-                    selected ? "border-primary bg-primary text-primary-foreground shadow-sm" : "bg-card shadow-sm active:bg-accent",
+                    "bg-card shadow-sm active:bg-accent",
+                    open && "max-md:border-primary max-md:bg-primary max-md:text-primary-foreground",
+                    selected && "md:border-primary md:bg-primary md:text-primary-foreground",
                   )}
                 >
                   <span
                     className={cn(
-                      "flex size-10 shrink-0 items-center justify-center rounded-xl md:size-12",
-                      selected ? "bg-primary-foreground/20" : "bg-chart-3/15 text-chart-3",
+                      "flex size-10 shrink-0 items-center justify-center rounded-xl bg-chart-3/15 text-chart-3 md:size-12",
+                      open && "max-md:bg-primary-foreground/20 max-md:text-primary-foreground",
+                      selected && "md:bg-primary-foreground/20 md:text-primary-foreground",
                     )}
                     aria-hidden
                   >
@@ -123,7 +134,13 @@ export function PlaceBrowser({ places }: { places: PlaceView[] }) {
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate font-heading text-base font-bold md:text-xl">{p.name}</span>
-                    <span className={cn("block text-sm md:text-lg", selected ? "opacity-85" : "text-muted-foreground")}>
+                    <span
+                      className={cn(
+                        "block text-sm text-muted-foreground md:text-lg",
+                        open && "max-md:text-primary-foreground max-md:opacity-85",
+                        selected && "md:text-primary-foreground md:opacity-85",
+                      )}
+                    >
                       {cat.label}
                       {p.driveMinutes != null && ` · ${p.driveMinutes} min`}
                     </span>
@@ -131,14 +148,25 @@ export function PlaceBrowser({ places }: { places: PlaceView[] }) {
                   {p.favorite && (
                     <HugeiconsIcon icon={StarIcon} className="size-6 shrink-0" strokeWidth={2} aria-label="Host’s pick" />
                   )}
+                  <HugeiconsIcon
+                    icon={ArrowDown01Icon}
+                    className={cn("size-5 shrink-0 transition-transform md:hidden", open && "rotate-180")}
+                    strokeWidth={2}
+                    aria-hidden
+                  />
                 </button>
+                {open && (
+                  <div className="px-2 pt-3 pb-2 md:hidden">
+                    <PlaceDetails place={p} />
+                  </div>
+                )}
               </li>
             );
           })}
         </ul>
 
         {place && (
-          <article key={place.id} className="p-1 md:min-h-0 md:flex-1 md:overflow-y-auto md:overscroll-contain">
+          <article key={place.id} className="hidden p-1 md:block md:min-h-0 md:flex-1 md:overflow-y-auto md:overscroll-contain">
             <PlaceDetails place={place} />
           </article>
         )}
