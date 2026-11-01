@@ -210,6 +210,17 @@ const MIGRATIONS: Migration[] = [
       await putFromSeed(store, "places", missing);
     },
   },
+  {
+    // Baldwin Park, for lake views, under Parks.
+    id: "2026-11-baldwin-park",
+    async run(store) {
+      const missing = [];
+      for (const p of buildSeed().docs.places.filter((p) => p.id === "place-baldwin-park")) {
+        if (!(await store.get("places", p.id))) missing.push(p);
+      }
+      await putFromSeed(store, "places", missing);
+    },
+  },
 ];
 
 async function putFromSeed<C extends CollectionName>(
