@@ -210,6 +210,20 @@ const MIGRATIONS: Migration[] = [
       await putFromSeed(store, "places", missing);
     },
   },
+  {
+    id: "2026-11-baldwin-park",
+    async run(store) {
+      if (await store.get("places", "place-baldwin-park")) return;
+      await putFromSeed(store, "places", buildSeed().docs.places.filter((p) => p.id === "place-baldwin-park"));
+    },
+  },
+  {
+    id: "2026-11-crocante",
+    async run(store) {
+      if (await store.get("places", "place-crocante")) return;
+      await putFromSeed(store, "places", buildSeed().docs.places.filter((p) => p.id === "place-crocante"));
+    },
+  },
 ];
 
 async function putFromSeed<C extends CollectionName>(

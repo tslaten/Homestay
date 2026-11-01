@@ -326,6 +326,13 @@ export function buildSeed(now: Date = new Date()): { settings: Settings; docs: S
         favorite: true,
         order: 1,
       },
+      {
+        id: "place-baldwin-park",
+        name: "Baldwin Park",
+        category: "park",
+        description: "Lake views. One loop around the park is 2.5 miles, or hang out around the piers.",
+        order: 2,
+      },
       // Coffee
       ...(
         [
@@ -356,6 +363,7 @@ export function buildSeed(now: Date = new Date()): { settings: Settings; docs: S
           ["place-jam-hot-chicken", "Jam Hot Chicken", "A really good chicken sandwich."],
           ["place-buttermilk-bakery", "Buttermilk Bakery", "The best baked goods in Orlando."],
           ["place-7bites", "7Bites", "Southern-style, indulgent breakfast."],
+          ["place-crocante", "Crocante", "Elevated Puerto Rican food."],
         ] as const
       ).map(([id, name, description], i) => ({ id, name, category: "food" as const, description, order: 30 + i })),
     ],
