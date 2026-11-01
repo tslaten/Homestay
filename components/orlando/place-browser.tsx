@@ -51,6 +51,8 @@ type Filter = "all" | "favorites" | Place["category"];
 export function PlaceBrowser({ places }: { places: PlaceView[] }) {
   const [filter, setFilter] = useState<Filter>("all");
   const [selectedId, setSelectedId] = useState(places[0]?.id);
+  // Phones show a vertical list; tapping a place expands it in place (tap again to close).
+  const [expandedId, setExpandedId] = useState<string | undefined>();
 
   const visible = places.filter((p) =>
     filter === "all" ? true : filter === "favorites" ? p.favorite : p.category === filter,
@@ -67,7 +69,8 @@ export function PlaceBrowser({ places }: { places: PlaceView[] }) {
 
   return (
     <div className="flex flex-col gap-3 md:min-h-0 md:flex-1 md:gap-4">
-      <div role="toolbar" aria-label="Filter places" className="flex shrink-0 gap-2 overflow-x-auto p-1 md:gap-3">
+      {/* Phones: chips wrap so every filter is visible; the kiosk keeps one scrolling row. */}
+      <div role="toolbar" aria-label="Filter places" className="flex shrink-0 flex-wrap gap-2 p-1 md:flex-nowrap md:gap-3 md:overflow-x-auto">
         {chips.map((chip) => {
           const active = chip.id === filter;
           return (
@@ -91,31 +94,42 @@ export function PlaceBrowser({ places }: { places: PlaceView[] }) {
       </div>
 
       <div className="flex flex-col gap-4 md:min-h-0 md:flex-1 md:flex-row md:gap-6">
-        {/* Phones: places scroll sideways above the details. */}
+        {/* Phones: a vertical list with the chosen place expanded under its row. */}
         <ul
           aria-label="Places"
-          className="flex shrink-0 gap-2 overflow-x-auto p-1 md:w-96 md:flex-col md:overflow-x-visible md:overflow-y-auto md:overscroll-contain"
+          className="flex flex-col gap-2 p-1 md:w-96 md:shrink-0 md:overflow-y-auto md:overscroll-contain"
         >
           {visible.map((p) => {
             const selected = p.id === place?.id;
+            const expanded = p.id === expandedId;
             const cat = CATEGORIES[p.category];
             return (
-              <li key={p.id} className="w-64 shrink-0 md:w-auto">
+              <li key={p.id}>
                 <button
                   type="button"
                   aria-current={selected ? "true" : undefined}
-                  onClick={() => setSelectedId(p.id)}
+                  aria-expanded={expanded}
+                  onClick={() => {
+                    setSelectedId(p.id);
+                    setExpandedId(expanded ? undefined : p.id);
+                  }}
                   className={cn(
                     "flex min-h-touch w-full items-center gap-3 rounded-2xl border p-2 text-left md:gap-4 md:p-3",
                     "touch-manipulation transition-[transform,background-color] duration-100 active:scale-[0.98]",
                     "outline-none focus-visible:ring-4 focus-visible:ring-ring/50",
-                    selected ? "border-primary bg-primary text-primary-foreground shadow-sm" : "bg-card shadow-sm active:bg-accent",
+                    expanded
+                      ? "border-primary bg-primary text-primary-foreground shadow-sm"
+                      : "bg-card shadow-sm active:bg-accent",
+                    selected
+                      ? "md:border-primary md:bg-primary md:text-primary-foreground"
+                      : "md:border-border md:bg-card md:text-foreground",
                   )}
                 >
                   <span
                     className={cn(
                       "flex size-10 shrink-0 items-center justify-center rounded-xl md:size-12",
-                      selected ? "bg-primary-foreground/20" : "bg-chart-3/15 text-chart-3",
+                      expanded ? "bg-primary-foreground/20" : "bg-chart-3/15 text-chart-3",
+                      selected ? "md:bg-primary-foreground/20 md:text-current" : "md:bg-chart-3/15 md:text-chart-3",
                     )}
                     aria-hidden
                   >
@@ -123,7 +137,13 @@ export function PlaceBrowser({ places }: { places: PlaceView[] }) {
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate font-heading text-base font-bold md:text-xl">{p.name}</span>
-                    <span className={cn("block text-sm md:text-lg", selected ? "opacity-85" : "text-muted-foreground")}>
+                    <span
+                      className={cn(
+                        "block text-sm md:text-lg",
+                        expanded ? "opacity-85" : "text-muted-foreground",
+                        selected ? "md:text-current md:opacity-85" : "md:text-muted-foreground md:opacity-100",
+                      )}
+                    >
                       {cat.label}
                       {p.driveMinutes != null && ` · ${p.driveMinutes} min`}
                     </span>
@@ -132,13 +152,18 @@ export function PlaceBrowser({ places }: { places: PlaceView[] }) {
                     <HugeiconsIcon icon={StarIcon} className="size-6 shrink-0" strokeWidth={2} aria-label="Host’s pick" />
                   )}
                 </button>
+                {expanded && (
+                  <div className="px-2 pt-3 pb-2 md:hidden">
+                    <PlaceSummary place={p} />
+                  </div>
+                )}
               </li>
             );
           })}
         </ul>
 
         {place && (
-          <article key={place.id} className="p-1 md:min-h-0 md:flex-1 md:overflow-y-auto md:overscroll-contain">
+          <article key={place.id} className="hidden p-1 md:block md:min-h-0 md:flex-1 md:overflow-y-auto md:overscroll-contain">
             <PlaceDetails place={place} />
           </article>
         )}
@@ -165,42 +190,7 @@ function PlaceDetails({ place }: { place: PlaceView }) {
           </p>
         </div>
 
-        <p className="text-lg leading-snug md:text-2xl">{place.description}</p>
-
-        <dl className="flex flex-col gap-3 text-base md:text-xl">
-          {place.driveMinutes != null && (
-            <InfoRow icon={Car01Icon} label="Drive">
-              About {place.driveMinutes} min by car
-            </InfoRow>
-          )}
-          {place.address && (
-            <InfoRow icon={Location01Icon} label="Address">
-              <span data-selectable>{place.address}</span>
-            </InfoRow>
-          )}
-          {place.phone && (
-            <InfoRow icon={Call02Icon} label="Phone">
-              <span data-selectable className="tabular-nums">
-                <PhoneLink phone={place.phone} />
-              </span>
-            </InfoRow>
-          )}
-          {place.url && (
-            <InfoRow icon={Globe02Icon} label="Website">
-              <span data-selectable className="break-all">
-                {place.url.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "")}
-              </span>
-            </InfoRow>
-          )}
-        </dl>
-
-        {/* On a phone the QR code can't be scanned by the same phone, so link straight to directions. */}
-        <Button asChild size="compact" className="self-start md:hidden">
-          <a href={place.directionsUrl} target="_blank" rel="noopener noreferrer">
-            <HugeiconsIcon icon={Navigation03Icon} strokeWidth={2} aria-hidden />
-            Directions
-          </a>
-        </Button>
+        <PlaceSummary place={place} />
       </div>
 
       <div className="hidden w-64 shrink-0 flex-col items-center gap-3 self-start rounded-3xl border bg-card p-5 shadow-sm md:flex">
@@ -216,6 +206,50 @@ function PlaceDetails({ place }: { place: PlaceView }) {
           Scan for directions
         </p>
       </div>
+    </div>
+  );
+}
+
+/** Description, details and (on phones) a Directions button. */
+function PlaceSummary({ place }: { place: PlaceView }) {
+  return (
+    <div className="flex flex-col gap-3 md:gap-4">
+      <p className="text-lg leading-snug md:text-2xl">{place.description}</p>
+
+      <dl className="flex flex-col gap-3 text-base md:text-xl">
+        {place.driveMinutes != null && (
+          <InfoRow icon={Car01Icon} label="Drive">
+            About {place.driveMinutes} min by car
+          </InfoRow>
+        )}
+        {place.address && (
+          <InfoRow icon={Location01Icon} label="Address">
+            <span data-selectable>{place.address}</span>
+          </InfoRow>
+        )}
+        {place.phone && (
+          <InfoRow icon={Call02Icon} label="Phone">
+            <span data-selectable className="tabular-nums">
+              <PhoneLink phone={place.phone} />
+            </span>
+          </InfoRow>
+        )}
+        {place.url && (
+          <InfoRow icon={Globe02Icon} label="Website">
+            <span data-selectable className="break-all">
+              {place.url.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "")}
+            </span>
+          </InfoRow>
+        )}
+      </dl>
+
+      {/* On a phone the QR code can't be scanned by the same phone, so link straight to directions. */}
+      <Button asChild size="compact" className="self-start md:hidden">
+        <a href={place.directionsUrl} target="_blank" rel="noopener noreferrer">
+          <HugeiconsIcon icon={Navigation03Icon} strokeWidth={2} aria-hidden />
+          Directions
+        </a>
+      </Button>
     </div>
   );
 }

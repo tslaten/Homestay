@@ -326,6 +326,13 @@ export function buildSeed(now: Date = new Date()): { settings: Settings; docs: S
         favorite: true,
         order: 1,
       },
+      {
+        id: "place-baldwin-park",
+        name: "Baldwin Park",
+        category: "park",
+        description: "Lake views. One loop around the park is 2.5 miles, or hang out around the piers.",
+        order: 2,
+      },
       // Coffee
       ...(
         [
