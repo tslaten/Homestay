@@ -70,14 +70,14 @@ async function Home() {
   const checkingOutToday = stay?.endDate === today;
 
   return (
-    <div className="flex h-full flex-col gap-6 p-8">
-      <header className="flex shrink-0 items-start justify-between gap-8">
+    <div className="flex flex-col gap-5 p-4 md:h-full md:gap-6 md:p-8">
+      <header className="flex shrink-0 items-start justify-between gap-3 md:gap-8">
         <div className="min-w-0">
-          <h1 className="truncate text-5xl tracking-tight">
+          <h1 className="text-2xl tracking-tight md:truncate md:text-5xl">
             {greeting(now)}
             {stay ? `, ${stay.guestName}` : ""}
           </h1>
-          <p className="mt-2 truncate text-xl text-muted-foreground">
+          <p className="mt-1 text-base text-muted-foreground md:mt-2 md:truncate md:text-xl">
             {checkingOutToday
               ? `Check-out today by ${formatLocalTime(settings.checkOutTime)}`
               : `Welcome to ${settings.propertyName}`}
@@ -88,7 +88,7 @@ async function Home() {
 
       <nav
         aria-label="Guide sections"
-        className="grid min-h-0 flex-1 grid-cols-2 gap-5 md:grid-cols-4 md:grid-rows-2"
+        className="grid grid-cols-2 gap-3 md:min-h-0 md:flex-1 md:grid-cols-4 md:grid-rows-2 md:gap-5"
       >
         <HomeTile
           href="/today"
@@ -169,20 +169,20 @@ function TodaySummary({
   overdue: number;
 }) {
   if (allDone) {
-    return <p className="mt-auto font-heading text-2xl font-bold">All done for today. Thank you!</p>;
+    return <p className="mt-auto font-heading text-lg font-bold md:text-2xl">All done for today. Thank you!</p>;
   }
   if (!next) return null;
   return (
-    <div className="mt-auto flex flex-col gap-3">
+    <div className="mt-auto flex flex-col gap-2 md:gap-3">
       {overdue > 0 && (
-        <p className="w-fit rounded-full bg-destructive/15 px-4 py-1 text-lg font-medium text-destructive">
+        <p className="w-fit rounded-full bg-destructive/15 px-3 py-0.5 text-base font-medium text-destructive md:px-4 md:py-1 md:text-lg">
           {overdue} overdue
         </p>
       )}
-      <div className="rounded-2xl bg-muted p-4">
-        <p className="text-lg text-muted-foreground">Up next</p>
-        <p className="text-xl font-medium tabular-nums">{next.time}</p>
-        <p className="font-heading text-2xl font-bold">{next.title}</p>
+      <div className="rounded-2xl bg-muted p-3 md:p-4">
+        <p className="text-sm text-muted-foreground md:text-lg">Up next</p>
+        <p className="text-base font-medium tabular-nums md:text-xl">{next.time}</p>
+        <p className="font-heading text-lg font-bold md:text-2xl">{next.title}</p>
       </div>
     </div>
   );
@@ -190,9 +190,9 @@ function TodaySummary({
 
 function HomeSkeleton() {
   return (
-    <div className="flex h-full flex-col gap-6 p-8" aria-busy>
-      <div className="h-24 shrink-0 animate-pulse rounded-3xl bg-muted" />
-      <div className="grid min-h-0 flex-1 grid-cols-2 gap-5 md:grid-cols-4 md:grid-rows-2">
+    <div className="flex flex-col gap-5 p-4 md:h-full md:gap-6 md:p-8" aria-busy>
+      <div className="h-16 shrink-0 animate-pulse rounded-3xl bg-muted md:h-24" />
+      <div className="grid grid-cols-2 gap-3 md:min-h-0 md:flex-1 md:grid-cols-4 md:grid-rows-2 md:gap-5">
         {Array.from({ length: 7 }, (_, i) => (
           <div
             key={i}

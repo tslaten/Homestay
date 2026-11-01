@@ -40,11 +40,15 @@ export function GuideBrowser({ guides }: { guides: GuideView[] }) {
   const guide = ordered.find((g) => g.id === selectedId) ?? ordered[0];
 
   return (
-    <div className="flex min-h-0 flex-1 gap-6">
-      <nav aria-label="Guides" className="flex w-80 shrink-0 flex-col gap-2 overflow-y-auto overscroll-contain p-1">
+    <div className="flex flex-col gap-4 md:min-h-0 md:flex-1 md:flex-row md:gap-6">
+      {/* Phones: every guide as a wrapping row of buttons (no category headings). */}
+      <nav
+        aria-label="Guides"
+        className="flex shrink-0 flex-wrap gap-2 p-1 md:w-80 md:flex-col md:flex-nowrap md:overflow-y-auto md:overscroll-contain"
+      >
         {groups.map((group) => (
-          <div key={group.id} className="flex flex-col gap-2">
-            <h2 className="mt-2 flex items-center gap-2 px-2 font-sans text-lg font-normal text-muted-foreground first:mt-0">
+          <div key={group.id} className="contents md:flex md:flex-col md:gap-2">
+            <h2 className="mt-2 hidden items-center gap-2 px-2 font-sans text-lg font-normal text-muted-foreground first:mt-0 md:flex">
               <HugeiconsIcon icon={group.icon} className="size-6" strokeWidth={2} aria-hidden />
               {group.label}
             </h2>
@@ -57,7 +61,7 @@ export function GuideBrowser({ guides }: { guides: GuideView[] }) {
                   aria-current={selected ? "true" : undefined}
                   onClick={() => setSelectedId(g.id)}
                   className={cn(
-                    "flex min-h-touch items-center rounded-2xl border px-5 py-3 text-left font-heading text-xl font-bold",
+                    "flex min-h-12 items-center rounded-2xl border px-4 py-2 text-left font-heading text-base font-bold md:min-h-touch md:px-5 md:py-3 md:text-xl",
                     "touch-manipulation transition-[transform,background-color] duration-100 active:scale-[0.98]",
                     "outline-none focus-visible:ring-4 focus-visible:ring-ring/50",
                     selected
@@ -73,7 +77,7 @@ export function GuideBrowser({ guides }: { guides: GuideView[] }) {
         ))}
       </nav>
 
-      <article key={guide.id} className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-1">
+      <article key={guide.id} className="p-1 md:min-h-0 md:flex-1 md:overflow-y-auto md:overscroll-contain">
         <GuideDetails guide={guide} />
       </article>
     </div>
@@ -83,29 +87,29 @@ export function GuideBrowser({ guides }: { guides: GuideView[] }) {
 function GuideDetails({ guide }: { guide: GuideView }) {
   const category = categoryOf(guide.category);
   return (
-    <div className="flex flex-col gap-5">
-      <div className="flex items-center gap-5">
-        <span className="flex size-20 shrink-0 items-center justify-center rounded-3xl bg-chart-2/15 text-chart-2" aria-hidden>
-          <HugeiconsIcon icon={category.icon} className="size-11" strokeWidth={2} />
+    <div className="flex flex-col gap-4 md:gap-5">
+      <div className="flex items-center gap-4 md:gap-5">
+        <span className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-chart-2/15 text-chart-2 md:size-20 md:rounded-3xl" aria-hidden>
+          <HugeiconsIcon icon={category.icon} className="size-8 md:size-11" strokeWidth={2} />
         </span>
         <div className="min-w-0">
-          <h2 className="text-5xl">{guide.title}</h2>
-          <p className="text-xl text-muted-foreground">{category.label}</p>
+          <h2 className="text-3xl md:text-5xl">{guide.title}</h2>
+          <p className="text-base text-muted-foreground md:text-xl">{category.label}</p>
         </div>
       </div>
 
-      {guide.summary && <p className="text-2xl leading-snug">{guide.summary}</p>}
+      {guide.summary && <p className="text-lg leading-snug md:text-2xl">{guide.summary}</p>}
 
       <ol className="flex flex-col gap-3">
         {guide.steps.map((step, i) => (
-          <li key={i} className="flex items-start gap-5 rounded-3xl border bg-card p-5 shadow-sm">
+          <li key={i} className="flex items-start gap-3 rounded-3xl border bg-card p-4 shadow-sm md:gap-5 md:p-5">
             <span
-              className="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary font-heading text-2xl font-bold text-primary-foreground"
+              className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary font-heading text-lg font-bold text-primary-foreground md:size-12 md:text-2xl"
               aria-hidden
             >
               {i + 1}
             </span>
-            <p className="pt-1.5 text-2xl leading-snug">{step}</p>
+            <p className="pt-1 text-lg leading-snug md:pt-1.5 md:text-2xl">{step}</p>
           </li>
         ))}
       </ol>

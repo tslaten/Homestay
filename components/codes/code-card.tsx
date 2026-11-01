@@ -32,28 +32,28 @@ export function CodeCard({ code }: { code: CodeView }) {
   useLayoutEffect(() => () => setRevealed(false), []);
 
   return (
-    <section className="flex flex-col gap-4 rounded-3xl border bg-card p-5 shadow-sm">
-      <div className="flex items-start gap-4">
-        <span className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-muted" aria-hidden>
-          <HugeiconsIcon icon={Key01Icon} className="size-8" strokeWidth={2} />
+    <section className="flex flex-col gap-3 rounded-3xl border bg-card p-4 shadow-sm md:gap-4 md:p-5">
+      <div className="flex items-start gap-3 md:gap-4">
+        <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-muted md:size-14 md:rounded-2xl" aria-hidden>
+          <HugeiconsIcon icon={Key01Icon} className="size-6 md:size-8" strokeWidth={2} />
         </span>
         <div className="min-w-0">
-          <h2 className="text-3xl leading-tight">{code.label}</h2>
+          <h2 className="text-2xl leading-tight md:text-3xl">{code.label}</h2>
           {code.location && (
-            <p className="mt-1 flex items-start gap-2 text-xl leading-snug text-muted-foreground">
-              <HugeiconsIcon icon={Location01Icon} className="mt-0.5 size-6 shrink-0" strokeWidth={2} aria-hidden />
+            <p className="mt-1 flex items-start gap-2 text-base leading-snug text-muted-foreground md:text-xl">
+              <HugeiconsIcon icon={Location01Icon} className="mt-0.5 size-5 shrink-0 md:size-6" strokeWidth={2} aria-hidden />
               {code.location}
             </p>
           )}
         </div>
       </div>
 
-      <div className="flex items-center gap-4 rounded-2xl bg-muted px-5 py-3">
+      <div className="flex items-center gap-3 rounded-2xl bg-muted px-4 py-2 md:gap-4 md:px-5 md:py-3">
         <p
           aria-live="polite"
           data-selectable={revealed || undefined}
           className={cn(
-            "min-w-0 flex-1 font-mono text-5xl leading-tight font-bold",
+            "min-w-0 flex-1 font-mono text-4xl leading-tight font-bold md:text-5xl",
             revealed ? "break-all" : "whitespace-nowrap text-muted-foreground",
           )}
         >
@@ -67,16 +67,16 @@ export function CodeCard({ code }: { code: CodeView }) {
           variant={revealed ? "secondary" : "default"}
           aria-pressed={revealed}
           onClick={() => setRevealed((r) => !r)}
-          className="w-36 rounded-2xl"
+          className="min-h-12 shrink-0 rounded-2xl px-4 text-base md:min-h-18 md:w-36 md:text-xl"
         >
-          <HugeiconsIcon icon={revealed ? ViewOffIcon : ViewIcon} className="size-7" strokeWidth={2} aria-hidden />
+          <HugeiconsIcon icon={revealed ? ViewOffIcon : ViewIcon} className="size-6 md:size-7" strokeWidth={2} aria-hidden />
           {revealed ? "Hide" : "Show"}
         </Button>
       </div>
 
       {code.notes && (
-        <p className="flex items-start gap-2 text-xl leading-snug">
-          <HugeiconsIcon icon={InformationCircleIcon} className="mt-0.5 size-6 shrink-0 text-muted-foreground" strokeWidth={2} aria-hidden />
+        <p className="flex items-start gap-2 text-base leading-snug md:text-xl">
+          <HugeiconsIcon icon={InformationCircleIcon} className="mt-0.5 size-5 shrink-0 text-muted-foreground md:size-6" strokeWidth={2} aria-hidden />
           {code.notes}
         </p>
       )}

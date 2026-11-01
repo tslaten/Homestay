@@ -10,7 +10,7 @@ export default function CodesPage() {
   return (
     <>
       <ScreenHeader title="Codes" />
-      <main className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-8 pb-6">
+      <main className="px-4 pt-4 pb-6 md:min-h-0 md:flex-1 md:overflow-y-auto md:overscroll-contain md:px-8 md:pt-0">
         <Suspense fallback={<CodesSkeleton />}>
           <CodesContent />
         </Suspense>
@@ -25,11 +25,11 @@ async function CodesContent() {
   const list = await codes.list();
 
   if (list.length === 0) {
-    return <p className="pt-24 text-center text-3xl text-muted-foreground">No codes needed for this home.</p>;
+    return <p className="pt-16 text-center text-2xl text-muted-foreground md:pt-24 md:text-3xl">No codes needed for this home.</p>;
   }
 
   return (
-    <div className="grid grid-cols-1 items-start gap-5 p-1 md:grid-cols-2">
+    <div className="grid grid-cols-1 items-start gap-4 p-1 md:grid-cols-2 md:gap-5">
       {list.map(({ id, label, value, location, notes }) => (
         <CodeCard key={id} code={{ id, label, value, location, notes }} />
       ))}

@@ -12,7 +12,7 @@ export default function OrlandoPage() {
   return (
     <>
       <ScreenHeader title="Orlando" />
-      <main className="flex min-h-0 flex-1 flex-col px-8 pb-6">
+      <main className="flex flex-col px-4 pt-4 pb-6 md:min-h-0 md:flex-1 md:px-8 md:pt-0">
         <Suspense fallback={<OrlandoSkeleton />}>
           <OrlandoContent />
         </Suspense>
@@ -29,7 +29,7 @@ async function OrlandoContent() {
   if (list.length === 0) {
     return (
       <div className="flex flex-1 items-center justify-center">
-        <p className="text-center text-3xl text-muted-foreground">No places added yet.</p>
+        <p className="py-16 text-center text-2xl text-muted-foreground md:py-0 md:text-3xl">No places added yet.</p>
       </div>
     );
   }
@@ -46,6 +46,7 @@ async function OrlandoContent() {
       phone: p.phone,
       url: p.url,
       favorite: p.favorite,
+      directionsUrl: directionsUrl(p),
       qrSvg: await QRCode.toString(directionsUrl(p), {
         type: "svg",
         margin: 0,
@@ -61,15 +62,15 @@ async function OrlandoContent() {
 function OrlandoSkeleton() {
   return (
     <div className="flex flex-1 flex-col gap-4" aria-busy>
-      <div className="flex gap-3">
+      <div className="flex gap-3 overflow-hidden">
         {Array.from({ length: 5 }, (_, i) => (
-          <div key={i} className="h-14 w-36 animate-pulse rounded-full bg-muted" />
+          <div key={i} className="h-11 w-28 shrink-0 animate-pulse rounded-full bg-muted md:h-14 md:w-36" />
         ))}
       </div>
-      <div className="flex flex-1 gap-6">
-        <div className="flex w-96 flex-col gap-2">
+      <div className="flex flex-1 flex-col gap-4 md:flex-row md:gap-6">
+        <div className="flex gap-2 overflow-hidden md:w-96 md:flex-col">
           {Array.from({ length: 4 }, (_, i) => (
-            <div key={i} className="h-20 animate-pulse rounded-2xl bg-muted" />
+            <div key={i} className="h-16 w-64 shrink-0 animate-pulse rounded-2xl bg-muted md:h-20 md:w-auto" />
           ))}
         </div>
         <div className="h-72 flex-1 animate-pulse rounded-3xl bg-muted" />
