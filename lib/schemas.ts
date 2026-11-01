@@ -95,3 +95,72 @@ export const petSchema = z.object({
     .pipe(z.array(z.string()).max(12, "Up to 12 hiding spots")),
   vetContactId: z.string(),
 });
+
+/** Optional field list: one item per line, blanks dropped. */
+const lines = (maxEach: number, maxCount: number, label: string) =>
+  z
+    .array(z.string().trim().max(maxEach, `Keep each ${label} under ${maxEach} characters`))
+    .transform((items) => items.filter(Boolean))
+    .pipe(z.array(z.string()).max(maxCount, `Up to ${maxCount} ${label}s`));
+
+const phone = z
+  .string()
+  .trim()
+  .max(30, "Phone must be 30 characters or fewer")
+  .refine((s) => s === "" || /\d{3}/.test(s), "Enter a phone number");
+
+/** Place form → validated values. */
+export const placeSchema = z.object({
+  name: text(60, "Name"),
+  category: z.enum(["food", "coffee", "grocery", "pharmacy", "park", "attraction", "shopping", "medical"]),
+  description: text(300, "Description"),
+  address: optionalText(200, "Address"),
+  driveMinutes: z
+    .string()
+    .trim()
+    .refine((s) => s === "" || (/^\d{1,3}$/.test(s) && Number(s) <= 240), "Enter minutes, like 10")
+    .transform((s) => (s === "" ? undefined : Number(s))),
+  phone,
+  url: optionalText(300, "Website").refine((s) => s === "" || /^https?:\/\/\S+\.\S+/.test(s), "Start with https://"),
+  favorite: z.boolean(),
+});
+
+/** Contact form → validated values. */
+export const contactSchema = z.object({
+  name: text(80, "Name"),
+  role: text(80, "Role"),
+  phone,
+  email: optionalText(120, "Email").refine((s) => s === "" || /^\S+@\S+\.\S+$/.test(s), "Enter an email address"),
+  notes: optionalText(300, "Notes"),
+  emergency: z.boolean(),
+});
+
+/** Code form → validated values. */
+export const codeSchema = z.object({
+  label: text(60, "Label"),
+  value: text(40, "Code"),
+  location: optionalText(120, "Location"),
+  notes: optionalText(300, "Notes"),
+});
+
+/** Home guide (how-to) form → validated values. */
+export const guideSchema = z.object({
+  title: text(60, "Title"),
+  category: z.enum(["pets", "appliances", "entertainment", "climate", "outdoor", "safety", "other"]),
+  summary: optionalText(300, "Summary"),
+  steps: lines(300, 15, "step").pipe(z.array(z.string()).min(1, "Add at least one step")),
+});
+
+const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Pick a date");
+
+/** Stay form → validated values. Dates are inclusive New York calendar dates. */
+export const staySchema = z
+  .object({
+    guestName: text(80, "Name"),
+    startDate: isoDate,
+    endDate: isoDate,
+    notes: optionalText(300, "Notes"),
+  })
+  .superRefine((v, ctx) => {
+    if (v.endDate < v.startDate) ctx.addIssue({ code: "custom", path: ["endDate"], message: "Ends before it starts" });
+  });
