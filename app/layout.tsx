@@ -13,6 +13,8 @@ export const metadata: Metadata = {
   title: "Guest Guide",
   description: "House guide for guests",
   robots: { index: false, follow: false },
+  // Name under the icon when added to an iPhone home screen.
+  appleWebApp: { title: "Tricky" },
 };
 
 export const viewport: Viewport = {
