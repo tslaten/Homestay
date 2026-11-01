@@ -69,15 +69,15 @@ export function TaskChecklist({
   const nextKey = optimistic.find((i) => !i.optional && !i.done && i.time >= currentTime)?.key;
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-4">
+    <div className="flex flex-col gap-4 md:min-h-0 md:flex-1">
       {error && (
-        <p role="alert" className="shrink-0 rounded-2xl bg-destructive/15 px-6 py-3 text-xl text-destructive">
+        <p role="alert" className="shrink-0 rounded-2xl bg-destructive/15 px-4 py-3 text-base text-destructive md:px-6 md:text-xl">
           {error}
         </p>
       )}
       {/* One time-ordered grid; a heading starts each part of the day that has tasks. */}
-      <div ref={scrollRef} className="relative min-h-0 flex-1 overflow-y-auto overscroll-contain">
-        <div className="grid grid-cols-1 content-start items-start gap-4 p-1 md:grid-cols-3">
+      <div ref={scrollRef} className="relative md:min-h-0 md:flex-1 md:overflow-y-auto md:overscroll-contain">
+        <div className="grid grid-cols-1 content-start items-start gap-3 p-1 md:grid-cols-3 md:gap-4">
           {PERIODS.map((period, idx) => {
             const from = idx === 0 ? "00:00" : PERIODS[idx - 1].until;
             const group = optimistic.filter((i) => i.time >= from && i.time < period.until);
@@ -85,10 +85,10 @@ export function TaskChecklist({
             const counted = group.filter((i) => !i.optional);
             return (
               <Fragment key={period.id}>
-                <h2 className="col-span-full flex items-center gap-3 px-1 pt-1 text-2xl">
-                  <HugeiconsIcon icon={period.icon} className="size-8 text-muted-foreground" strokeWidth={2} aria-hidden />
+                <h2 className="col-span-full flex items-center gap-2 px-1 pt-1 text-xl md:gap-3 md:text-2xl">
+                  <HugeiconsIcon icon={period.icon} className="size-6 text-muted-foreground md:size-8" strokeWidth={2} aria-hidden />
                   {period.label}
-                  <span className="font-sans text-lg font-normal text-muted-foreground">
+                  <span className="font-sans text-sm font-normal text-muted-foreground md:text-lg">
                     · {counted.filter((i) => i.done).length} of {counted.length} done
                   </span>
                 </h2>
@@ -127,7 +127,7 @@ function ChecklistRow({
       onClick={onToggle}
       aria-pressed={item.done}
       className={cn(
-        "flex min-h-touch w-full items-start gap-4 rounded-3xl border bg-card p-4 text-left shadow-sm",
+        "flex min-h-touch w-full items-start gap-3 rounded-3xl border bg-card p-3 text-left shadow-sm md:gap-4 md:p-4",
         "touch-manipulation transition-[transform,background-color] duration-100 active:scale-[0.98] active:bg-accent",
         "outline-none focus-visible:ring-4 focus-visible:ring-ring/50",
         next && "border-primary ring-2 ring-primary",
@@ -137,39 +137,39 @@ function ChecklistRow({
     >
       <span
         className={cn(
-          "flex size-14 shrink-0 items-center justify-center rounded-full border-[3px]",
+          "flex size-11 shrink-0 items-center justify-center rounded-full border-[3px] md:size-14",
           item.done ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background",
         )}
         aria-hidden
       >
-        {item.done && <HugeiconsIcon icon={Tick02Icon} className="size-8" strokeWidth={3} />}
+        {item.done && <HugeiconsIcon icon={Tick02Icon} className="size-6 md:size-8" strokeWidth={3} />}
       </span>
       <span className="flex min-w-0 flex-1 flex-col gap-1">
         <span
           className={cn(
-            "font-heading text-2xl leading-tight font-bold",
+            "font-heading text-lg leading-tight font-bold md:text-2xl",
             item.done && "text-muted-foreground line-through decoration-2",
           )}
         >
           {item.title}
         </span>
-        <span className="flex flex-wrap items-center gap-x-3 gap-y-1 text-lg text-muted-foreground">
+        <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground md:gap-x-3 md:text-lg">
           <span className="tabular-nums">{item.timeLabel}</span>
           {item.petName && <span>· {item.petName}</span>}
           {item.optional && !item.done && (
-            <span className="rounded-full bg-muted px-3 text-base font-medium text-muted-foreground">Optional</span>
+            <span className="rounded-full bg-muted px-2 text-xs font-medium text-muted-foreground md:px-3 md:text-base">Optional</span>
           )}
           {overdue && (
-            <span className="rounded-full bg-destructive/15 px-3 text-base font-medium text-destructive">Overdue</span>
+            <span className="rounded-full bg-destructive/15 px-2 text-xs font-medium text-destructive md:px-3 md:text-base">Overdue</span>
           )}
           {next && !overdue && (
-            <span className="rounded-full bg-primary/20 px-3 text-base font-medium text-foreground">Up next</span>
+            <span className="rounded-full bg-primary/20 px-2 text-xs font-medium text-foreground md:px-3 md:text-base">Up next</span>
           )}
         </span>
         {item.done ? (
-          item.doneLabel && <span className="text-lg text-muted-foreground">Done {item.doneLabel}</span>
+          item.doneLabel && <span className="text-sm text-muted-foreground md:text-lg">Done {item.doneLabel}</span>
         ) : (
-          item.details && <span className="line-clamp-4 text-lg text-muted-foreground">{item.details}</span>
+          item.details && <span className="line-clamp-4 text-sm text-muted-foreground md:text-lg">{item.details}</span>
         )}
       </span>
     </button>

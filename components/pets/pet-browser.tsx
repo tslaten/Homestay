@@ -17,6 +17,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
 
+import { PhoneLink } from "@/components/kiosk/phone-link";
 import { Button } from "@/components/ui/button";
 import type { Pet } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -49,10 +50,13 @@ export function PetBrowser({ pets }: { pets: PetView[] }) {
   const pet = pets.find((p) => p.id === selectedId) ?? pets[0];
 
   return (
-    <div className="flex min-h-0 flex-1 gap-6">
+    <div className="flex flex-col gap-4 md:min-h-0 md:flex-1 md:flex-row md:gap-6">
       {/* With one pet there is nothing to choose, so skip the picker. */}
       {pets.length > 1 && (
-        <div role="tablist" aria-orientation="vertical" className="flex w-64 shrink-0 flex-col gap-3 overflow-y-auto p-1">
+        <div
+          role="tablist"
+          className="flex shrink-0 gap-2 overflow-x-auto p-1 md:w-64 md:flex-col md:gap-3 md:overflow-x-visible md:overflow-y-auto"
+        >
           {pets.map((p) => {
             const selected = p.id === pet.id;
             return (
@@ -63,7 +67,7 @@ export function PetBrowser({ pets }: { pets: PetView[] }) {
                 aria-selected={selected}
                 onClick={() => setSelectedId(p.id)}
                 className={cn(
-                  "flex min-h-touch items-center gap-4 rounded-3xl border p-3 text-left",
+                  "flex min-h-touch shrink-0 items-center gap-3 rounded-3xl border p-2 pr-5 text-left md:gap-4 md:p-3",
                   "touch-manipulation transition-[transform,background-color] duration-100 active:scale-[0.98]",
                   "outline-none focus-visible:ring-4 focus-visible:ring-ring/50",
                   selected
@@ -71,8 +75,8 @@ export function PetBrowser({ pets }: { pets: PetView[] }) {
                     : "bg-card shadow-sm active:bg-accent",
                 )}
               >
-                <PetAvatar pet={p} className="size-16" inverted={selected} />
-                <span className="truncate font-heading text-2xl font-bold">{p.name}</span>
+                <PetAvatar pet={p} className="size-10 md:size-16" inverted={selected} />
+                <span className="truncate font-heading text-lg font-bold md:text-2xl">{p.name}</span>
               </button>
             );
           })}
@@ -83,7 +87,7 @@ export function PetBrowser({ pets }: { pets: PetView[] }) {
         key={pet.id}
         role={pets.length > 1 ? "tabpanel" : undefined}
         aria-label={pet.name}
-        className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-1"
+        className="p-1 md:min-h-0 md:flex-1 md:overflow-y-auto md:overscroll-contain"
       >
         <PetDetails pet={pet} />
       </section>
@@ -98,7 +102,7 @@ function PetDetails({ pet }: { pet: PetView }) {
 
   const feeding = (
     <InfoCard icon={SpoonAndForkIcon} title="Feeding">
-      <p className="text-xl leading-snug">{pet.feeding}</p>
+      <p className="text-base leading-snug md:text-xl">{pet.feeding}</p>
     </InfoCard>
   );
 
@@ -109,13 +113,13 @@ function PetDetails({ pet }: { pet: PetView }) {
       aside={counted.length > 0 ? `${doneCount} of ${counted.length} done` : undefined}
     >
       {pet.today.length === 0 ? (
-        <p className="text-xl text-muted-foreground">Nothing scheduled today.</p>
+        <p className="text-base text-muted-foreground md:text-xl">Nothing scheduled today.</p>
       ) : (
         // Read-only status: ticking happens on the Today screen, so nothing here looks like a checkbox.
         <ul className="flex flex-col gap-2">
           {pet.today.map((t) => (
-            <li key={t.key} className="flex items-baseline gap-3 text-xl">
-              <span className="w-24 shrink-0 tabular-nums text-muted-foreground">{t.timeLabel}</span>
+            <li key={t.key} className="flex items-baseline gap-3 text-base md:text-xl">
+              <span className="w-20 shrink-0 tabular-nums text-muted-foreground md:w-24">{t.timeLabel}</span>
               <span className={cn("min-w-0 flex-1", t.done && "text-muted-foreground line-through")}>
                 {t.title}
                 {t.optional && <span className="text-muted-foreground"> (optional)</span>}
@@ -123,7 +127,7 @@ function PetDetails({ pet }: { pet: PetView }) {
               {t.done && (
                 <HugeiconsIcon
                   icon={Tick02Icon}
-                  className="size-7 shrink-0 self-center text-primary"
+                  className="size-5 shrink-0 self-center text-primary md:size-7"
                   strokeWidth={3}
                   aria-label="Done"
                 />
@@ -143,7 +147,7 @@ function PetDetails({ pet }: { pet: PetView }) {
 
   const hiding = pet.hidingSpots && pet.hidingSpots.length > 0 && (
     <InfoCard icon={Search01Icon} title="Hiding spots">
-      <ul className="flex list-disc flex-col gap-1 pl-6 text-xl leading-snug">
+      <ul className="flex list-disc flex-col gap-1 pl-5 text-base leading-snug md:pl-6 md:text-xl">
         {pet.hidingSpots.map((spot) => (
           <li key={spot}>{spot}</li>
         ))}
@@ -153,30 +157,30 @@ function PetDetails({ pet }: { pet: PetView }) {
 
   const medical = pet.medical && (
     <InfoCard icon={Medicine02Icon} title="Medical">
-      <p className="text-xl leading-snug">{pet.medical}</p>
+      <p className="text-base leading-snug md:text-xl">{pet.medical}</p>
     </InfoCard>
   );
 
   return (
-    <div className="flex flex-col gap-5">
-      <div className="flex items-center gap-6">
-        <PetAvatar pet={pet} className="size-24" />
+    <div className="flex flex-col gap-4 md:gap-5">
+      <div className="flex flex-wrap items-center gap-4 md:gap-6">
+        <PetAvatar pet={pet} className="size-16 md:size-24" />
         <div className="min-w-0 flex-1">
-          <h2 className="truncate text-5xl">{pet.name}</h2>
-          <p className="text-xl text-muted-foreground">
+          <h2 className="truncate text-3xl md:text-5xl">{pet.name}</h2>
+          <p className="text-base text-muted-foreground md:text-xl">
             {species.label}
             {pet.breed && ` · ${pet.breed}`}
           </p>
         </div>
         {/* The vet sits in the header so the number is always on screen without scrolling. */}
         {pet.vet && (
-          <div className="flex shrink-0 items-center gap-4 rounded-3xl border bg-card px-5 py-4 shadow-sm">
-            <HugeiconsIcon icon={StethoscopeIcon} className="size-9 text-muted-foreground" strokeWidth={2} aria-hidden />
+          <div className="flex w-full items-center gap-3 rounded-3xl border bg-card px-4 py-3 shadow-sm md:w-auto md:shrink-0 md:gap-4 md:px-5 md:py-4">
+            <HugeiconsIcon icon={StethoscopeIcon} className="size-7 shrink-0 text-muted-foreground md:size-9" strokeWidth={2} aria-hidden />
             <div>
-              <p className="text-lg text-muted-foreground">Vet · {pet.vet.name}</p>
+              <p className="text-sm text-muted-foreground md:text-lg">Vet · {pet.vet.name}</p>
               {pet.vet.phone && (
-                <p data-selectable className="font-heading text-3xl font-bold tabular-nums">
-                  {pet.vet.phone}
+                <p data-selectable className="font-heading text-2xl font-bold tabular-nums md:text-3xl">
+                  <PhoneLink phone={pet.vet.phone} />
                 </p>
               )}
             </div>
@@ -184,7 +188,7 @@ function PetDetails({ pet }: { pet: PetView }) {
         )}
       </div>
 
-      <p className="text-2xl leading-snug">{pet.about}</p>
+      <p className="text-lg leading-snug md:text-2xl">{pet.about}</p>
 
       {/* Two independent stacks so a tall card never leaves a gap beside it. */}
       <div className="grid grid-cols-1 items-start gap-4 md:grid-cols-2">
@@ -215,11 +219,11 @@ function InfoCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-3xl border bg-card p-5 shadow-sm">
-      <h3 className="mb-3 flex items-center gap-3">
-        <HugeiconsIcon icon={icon} className="size-7 text-muted-foreground" strokeWidth={2} aria-hidden />
+    <div className="rounded-3xl border bg-card p-4 shadow-sm md:p-5">
+      <h3 className="mb-2 flex items-center gap-2 md:mb-3 md:gap-3">
+        <HugeiconsIcon icon={icon} className="size-6 text-muted-foreground md:size-7" strokeWidth={2} aria-hidden />
         {title}
-        {aside && <span className="ml-auto font-sans text-lg font-normal text-muted-foreground">{aside}</span>}
+        {aside && <span className="ml-auto font-sans text-sm font-normal text-muted-foreground md:text-lg">{aside}</span>}
       </h3>
       {children}
     </div>

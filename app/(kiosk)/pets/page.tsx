@@ -12,7 +12,7 @@ export default function PetsPage() {
   return (
     <>
       <ScreenHeader title="Pets" />
-      <main className="flex min-h-0 flex-1 flex-col px-8 pb-6">
+      <main className="flex flex-col px-4 pt-4 pb-6 md:min-h-0 md:flex-1 md:px-8 md:pt-0">
         <Suspense fallback={<PetsSkeleton />}>
           <PetsContent />
         </Suspense>
@@ -36,7 +36,7 @@ async function PetsContent() {
   if (petList.length === 0) {
     return (
       <div className="flex flex-1 items-center justify-center">
-        <p className="text-center text-3xl text-muted-foreground">No pets to look after on this stay.</p>
+        <p className="py-16 text-center text-2xl text-muted-foreground md:py-0 md:text-3xl">No pets to look after on this stay.</p>
       </div>
     );
   }
@@ -74,14 +74,14 @@ async function PetsContent() {
 
 function PetsSkeleton() {
   return (
-    <div className="flex flex-1 gap-6" aria-busy>
-      <div className="flex w-64 flex-col gap-3">
+    <div className="flex flex-1 flex-col gap-4 md:flex-row md:gap-6" aria-busy>
+      <div className="flex gap-3 md:w-64 md:flex-col">
         <div className="h-22 animate-pulse rounded-3xl bg-muted" />
         <div className="h-22 animate-pulse rounded-3xl bg-muted" />
       </div>
       <div className="flex flex-1 flex-col gap-5">
-        <div className="h-28 w-96 animate-pulse rounded-3xl bg-muted" />
-        <div className="grid grid-cols-2 gap-4">
+        <div className="h-28 animate-pulse rounded-3xl bg-muted md:w-96" />
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div className="h-48 animate-pulse rounded-3xl bg-muted" />
           <div className="h-48 animate-pulse rounded-3xl bg-muted" />
         </div>

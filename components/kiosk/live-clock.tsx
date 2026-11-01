@@ -24,9 +24,9 @@ export function LiveClock({ initialTime, initialDate }: { initialTime: string; i
   }, []);
 
   return (
-    <div className="text-right">
-      <div className="font-heading text-6xl font-bold tabular-nums leading-none tracking-tight">{time}</div>
-      <div className="mt-2 text-xl text-muted-foreground">{date}</div>
+    <div className="shrink-0 text-right">
+      <div className="font-heading text-3xl font-bold tabular-nums leading-none tracking-tight whitespace-nowrap md:text-6xl">{time}</div>
+      <div className="mt-1 text-sm text-muted-foreground md:mt-2 md:text-xl">{date}</div>
     </div>
   );
 }

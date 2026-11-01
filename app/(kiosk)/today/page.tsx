@@ -71,17 +71,17 @@ async function TodayContent() {
   });
 
   return (
-    <main className="flex min-h-0 flex-1 flex-col gap-5 px-8 pb-6">
+    <main className="flex flex-col gap-4 px-4 pt-4 pb-6 md:min-h-0 md:flex-1 md:gap-5 md:px-8 md:pt-0">
       {stay?.endDate === today && (
-        <p className="flex shrink-0 items-center gap-4 rounded-3xl bg-primary px-6 py-4 font-heading text-2xl font-bold text-primary-foreground">
-          <HugeiconsIcon icon={Logout03Icon} className="size-8" strokeWidth={2} aria-hidden />
+        <p className="flex shrink-0 items-center gap-3 rounded-3xl bg-primary px-4 py-3 font-heading text-lg font-bold text-primary-foreground md:gap-4 md:px-6 md:py-4 md:text-2xl">
+          <HugeiconsIcon icon={Logout03Icon} className="size-6 shrink-0 md:size-8" strokeWidth={2} aria-hidden />
           Check-out today by {formatLocalTime(settings.checkOutTime)}
         </p>
       )}
 
       {items.length === 0 ? (
         <div className="flex flex-1 items-center justify-center">
-          <p className="text-center text-3xl text-muted-foreground">Nothing to do today. Enjoy!</p>
+          <p className="py-16 text-center text-2xl text-muted-foreground md:py-0 md:text-3xl">Nothing to do today. Enjoy!</p>
         </div>
       ) : (
         <TaskChecklist items={items} currentTime={nowLocalTime(now)} />
@@ -92,8 +92,8 @@ async function TodayContent() {
 
 function ChecklistSkeleton() {
   return (
-    <main className="grid min-h-0 flex-1 grid-cols-1 content-start gap-4 px-9 pb-6 md:grid-cols-3" aria-busy>
-      <div className="col-span-full h-10 w-64 animate-pulse rounded-2xl bg-muted" />
+    <main className="grid grid-cols-1 content-start gap-3 px-4 pt-4 pb-6 md:min-h-0 md:flex-1 md:grid-cols-3 md:gap-4 md:px-9 md:pt-0" aria-busy>
+      <div className="col-span-full h-10 w-48 animate-pulse rounded-2xl bg-muted md:w-64" />
       {Array.from({ length: 6 }, (_, i) => (
         <div key={i} className="h-28 animate-pulse rounded-3xl bg-muted" />
       ))}
