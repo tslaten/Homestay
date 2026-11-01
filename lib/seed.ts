@@ -326,31 +326,35 @@ export function buildSeed(now: Date = new Date()): { settings: Settings; docs: S
         favorite: true,
         order: 1,
       },
-      {
-        id: "place-grocery",
-        name: "Nearest grocery store",
-        category: "grocery",
-        description: "Sample entry — replace with your go-to grocery store.",
-        driveMinutes: 5,
-        order: 2,
-      },
-      {
-        id: "place-pharmacy",
-        name: "24-hour pharmacy",
-        category: "pharmacy",
-        description: "Sample entry — replace with the closest late-night pharmacy.",
-        driveMinutes: 8,
-        order: 3,
-      },
-      {
-        id: "place-coffee",
-        name: "Favorite coffee shop",
-        category: "coffee",
-        description: "Sample entry — replace with the host's pick.",
-        driveMinutes: 6,
-        favorite: true,
-        order: 4,
-      },
+      // Coffee
+      ...(
+        [
+          ["place-haan", "Haan", "Korean-style coffee. Really good strawberry matcha."],
+          ["place-cafe-maiko", "Cafe Maiko", "Good all-around matcha."],
+          ["place-easy-luck", "Easy Luck", "Quick service, solid espresso."],
+        ] as const
+      ).map(([id, name, description], i) => ({ id, name, category: "coffee" as const, description, order: 20 + i })),
+      // Food
+      ...(
+        [
+          ["place-moderne", "Moderne", "Elevated Asian fusion."],
+          [
+            "place-mills-market",
+            "Mills Market",
+            "Asian food hall: onigiri, Vietnamese street food, banh mi, Japanese curry and a konbini.",
+          ],
+          ["place-the-strand", "The Strand", "Elevated New American."],
+          ["place-domu", "Domu", "Ramen. Try the wings!"],
+          ["place-secret-slice", "The Secret Slice", "Pizza."],
+          ["place-sodough", "Sodough", "Detroit-style pizza."],
+          ["place-mia-kai", "Mia Kai", "Hawaiian."],
+          ["place-east-end-market", "East End Market", "Another small food hall."],
+          ["place-jay-lucys", "Jay Lucy’s", "A solid burger."],
+          ["place-sticky-rice", "Sticky Rice", "Lao street food."],
+          ["place-black-bean-deli", "Black Bean Deli", "Solid Cuban food and empanadas."],
+          ["place-sampaguita", "Sampaguita", "Filipino-inspired ice cream flavors."],
+        ] as const
+      ).map(([id, name, description], i) => ({ id, name, category: "food" as const, description, order: 30 + i })),
     ],
 
     codes: [
