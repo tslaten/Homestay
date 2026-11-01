@@ -184,6 +184,32 @@ const MIGRATIONS: Migration[] = [
       }
     },
   },
+  {
+    // The host's coffee and food picks replace the placeholder places.
+    id: "2026-11-orlando-picks",
+    async run(store) {
+      const seed = buildSeed();
+      for (const id of ["place-grocery", "place-pharmacy", "place-coffee"]) {
+        if ((await store.get("places", id))?.description.startsWith("Sample entry")) await store.delete("places", id);
+      }
+      const picks = seed.docs.places.filter((p) => p.category === "coffee" || p.category === "food");
+      const missing = [];
+      for (const p of picks) if (!(await store.get("places", p.id))) missing.push(p);
+      await putFromSeed(store, "places", missing);
+    },
+  },
+  {
+    // Three more food picks, added after the one above may already have run.
+    id: "2026-11-more-orlando-picks",
+    async run(store) {
+      const ids = ["place-jam-hot-chicken", "place-buttermilk-bakery", "place-7bites"];
+      const missing = [];
+      for (const p of buildSeed().docs.places.filter((p) => ids.includes(p.id))) {
+        if (!(await store.get("places", p.id))) missing.push(p);
+      }
+      await putFromSeed(store, "places", missing);
+    },
+  },
 ];
 
 async function putFromSeed<C extends CollectionName>(
