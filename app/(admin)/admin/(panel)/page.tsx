@@ -3,6 +3,7 @@ import Link from "next/link";
 import {
   ArrowRight01Icon,
   BookOpen01Icon,
+  CheckListIcon,
   Calendar03Icon,
   ContactBookIcon,
   Key01Icon,
@@ -14,8 +15,9 @@ import {
 import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
 
 import { requireAdmin } from "@/lib/auth/access";
-import { codes, contacts, getSettings, howtos, pets, places, stays, tasks } from "@/lib/db";
-import { formatDateRange, todayISO } from "@/lib/time";
+import { codes, contacts, getSettings, howtos, listCompletionsOn, pets, places, stays, tasks } from "@/lib/db";
+import { buildHistory } from "@/lib/history";
+import { formatDateRange, nowLocalTime, todayISO } from "@/lib/time";
 
 export const metadata = { title: "Guest Guide admin" };
 
@@ -34,7 +36,9 @@ const count = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? on
 
 async function DashboardContent() {
   await requireAdmin();
-  const [settings, stayList, taskList, petList, placeList, guideList, contactList, codeList] = await Promise.all([
+  const now = new Date();
+  const today = todayISO(now);
+  const [settings, stayList, taskList, petList, placeList, guideList, contactList, codeList, todayTicks] = await Promise.all([
     getSettings(),
     stays.list(),
     tasks.list(),
@@ -43,12 +47,13 @@ async function DashboardContent() {
     howtos.list(),
     contacts.list(),
     codes.list(),
+    listCompletionsOn(today),
   ]);
   const activeTasks = taskList.filter((t) => t.active).length;
   // Current stay, else the next one coming up.
-  const today = todayISO();
   const stay = stayList.find((s) => s.endDate >= today);
   const picks = placeList.filter((p) => p.favorite).length;
+  const [todayLog] = buildHistory({ tasks: taskList, completions: todayTicks, from: today, to: today, today, now: nowLocalTime(now) }).days;
 
   return (
     <div className="flex flex-col gap-3">
@@ -67,6 +72,18 @@ async function DashboardContent() {
         icon={Task01Icon}
         title="Tasks"
         detail={`${activeTasks} active${taskList.length > activeTasks ? `, ${taskList.length - activeTasks} paused` : ""}`}
+      />
+      <Tile
+        href="/admin/history"
+        icon={CheckListIcon}
+        title="History"
+        detail={
+          !stay || stay.startDate > today
+            ? "Starts with the next stay"
+            : todayLog.due === 0
+              ? "Today: nothing due yet"
+              : `Today: ${todayLog.done} of ${todayLog.due} done${todayLog.missed ? ` · ${todayLog.missed} missed` : ""}`
+        }
       />
       <Tile href="/admin/pets" icon={PawPrintIcon} title="Pets" detail={petList.map((p) => p.name).join(" & ") || "None yet"} />
       <Tile

@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 export const ADMIN_SECTIONS: Record<string, string> = {
   stays: "Stays",
   tasks: "Tasks",
+  history: "History",
   pets: "Pets",
   places: "Places",
   guides: "Home guide",
