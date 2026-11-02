@@ -142,6 +142,21 @@ export function formatShortDate(date: ISODate): string {
   }).format(calendar(date));
 }
 
+/** "Mon, Nov 2" for an ISODate. Formats the calendar date, not an instant. */
+export function formatDayDate(date: ISODate): string {
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: "UTC", // matches calendar(); see note above
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  }).format(calendar(date));
+}
+
+/** "Nov 2 – Nov 16" for an inclusive ISODate range. */
+export function formatDateRange(start: ISODate, end: ISODate): string {
+  return start === end ? formatShortDate(start) : `${formatShortDate(start)} – ${formatShortDate(end)}`;
+}
+
 export function greeting(now: Date = new Date()): string {
   const { hour } = zonedParts(now);
   if (hour < 12) return "Good morning";
